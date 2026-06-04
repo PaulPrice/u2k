@@ -22,8 +22,14 @@ these need to be reformatted (warped to the skymap, PSF and variance measured) a
 
 ## Butler setup
 
-butler create $REPO
-butler register-instrument $REPO u2k.instrument.GenericCoadd
-butler register-skymap $REPO -C $U2K_DIR/config/skymap_rings.py -c name=hsc
-u2k_ingest.py $REPO /path/to/data coadds
+    butler create $REPO
+    butler register-instrument $REPO u2k.instrument.GenericCoadd
+    butler register-skymap $REPO -C $U2K_DIR/config/skymap_rings.py -c name=hsc
+    u2k_ingest.py $REPO /path/to/data coadds
 
+
+## Running the pipeline
+
+    pipetask run -b $REPO -i coadds,skymaps -o RERUN_NAME -p '$U2K_DIR/pipelines/multiband.yaml' -d "tract = 12345 AND patch = 67" --register-dataset-types
+
+You can drop the `--register-dataset-types` after running the pipeline once.

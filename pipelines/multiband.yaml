@@ -1,33 +1,71 @@
 description: Measure a FiberKernel from quartzes, and generate a new fiberProfile
-instrument: lsst.obs.pfs.PrimeFocusSpectrograph
+instrument: u2k.instrument.GenericCoadd
+
+imports:
+  - location: $MEAS_EXTENSIONS_MULTIPROFIT_DIR/pipelines/multiprofit_fit_standard.yaml
 
 tasks:
-  detection: lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask
-  mergeDetections: lsst.pipe.tasks.mergeDetections.MergeDetectionsTask
-  deblend: lsst.pipe.tasks.deblendCoaddSourcesPipeline.DeblendCoaddSourcesMultiTask
-  measure: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
-  mergeMeasurements: lsst.pipe.tasks.mergeMeasurements.MergeMeasurementsTask
-  forcedPhotCoadd: lsst.drp.tasks.forcedPhotCoadd.ForcedPhotCoaddTask
+  detection:
+    class: lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask
+    config:
+      file: $U2K_DIR/config/packer.py
+      useCellCoadds: false
+  mergeDetections:
+    class: lsst.pipe.tasks.mergeDetections.MergeDetectionsTask
+    config:
+      file: $U2K_DIR/config/priorityList.py
+  deconvolve:
+    class: lsst.meas.extensions.scarlet.deconvolveExposureTask.DeconvolveExposureTask
+    config:
+      useCellCoadds: false
+  deblend:
+    class: lsst.pipe.tasks.deblendCoaddSourcesPipeline.DeblendCoaddSourcesMultiTask
+    config:
+      useCellCoadds: false
+  measure:
+    class: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
+    config:
+      useCellCoadds: false
+      doPropagateFlags: false
+  mergeMeasurements:
+    class: lsst.pipe.tasks.mergeMeasurements.MergeMeasurementsTask
+    config:
+      file: $U2K_DIR/config/priorityList.py
+  forcedPhotCoadd:
+    class: lsst.drp.tasks.forcedPhotCoadd.ForcedPhotCoaddTask
+    config:
+      useCellCoadds: false
   writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
-  transformObjectTable: lsst.pipe.tasks.postprocess.TransformObjectCatalogTask
-  consolidateObjectTable: lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask
+# transformObjectTable requires a "object_epoch" input, with no obvious way to create it
+#  transformObjectTable: lsst.pipe.tasks.postprocess.TransformObjectCatalogTask
+#  consolidateObjectTable: lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask
 
 subsets:
   pixels:
     subset:
       - detection
       - mergeDetections
+      - deconvolve
       - deblend
       - measure
       - mergeMeasurements
       - forcedPhotCoadd
     description: >
       A set of tasks to run when making measurements on coadds.
+
+  multiprofit:
+    subset:
+      - fitDeepCoaddPsfGaussians
+      - fitDeblendedObjectsExp
+      - fitDeblendedObjectsSersic
+    description: >
+      Tasks involving multiprofit
+
   catalogs:
     subset:
       - writeObjectTable
-      - transformObjectTable
-      - consolidateObjectTable
+#      - transformObjectTable
+#      - consolidateObjectTable
     description: >
       A set of tasks to transform multiband catalogs into a parquet object
       table.

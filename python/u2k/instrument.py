@@ -6,14 +6,13 @@ from lsst.obs.base import Instrument, FilterDefinition, FilterDefinitionCollecti
 from lsst.obs.base.formatters.fitsExposure import FitsExposureFormatter
 from lsst.utils.introspection import get_full_type_name
 
-__all__ = ("GenericCoadd",)
+__all__ = ("GenericCoadd", "FILTER_DEFINITIONS", "FILTER_PRIORITY")
 
 
-filterDefinitions = FilterDefinitionCollection(
+FILTER_DEFINITIONS = FilterDefinitionCollection(
     FilterDefinition("HSC-G", "HSC-G", "Hyper Suprime-Cam g-band"),
     FilterDefinition("HSC-R", "HSC-R", "Hyper Suprime-Cam r-band"),
-    FilterDefinition("HSC-I1", "HSC-I1", "Hyper Suprime-Cam I1-band"),
-    FilterDefinition("HSC-I2", "HSC-I2", "Hyper Suprime-Cam I2-band"),
+    FilterDefinition("HSC-I", "HSC-I", "Hyper Suprime-Cam I-band"),
     FilterDefinition("HSC-Z", "HSC-Z", "Hyper Suprime-Cam z-band"),
     FilterDefinition("HSC-Y", "HSC-Y", "Hyper Suprime-Cam Y-band"),
     FilterDefinition("HSC-NB0387", "HSC-NB0387", "Hyper Suprime-Cam NB0387 narrowband"),
@@ -36,12 +35,21 @@ filterDefinitions = FilterDefinitionCollection(
 )
 
 
+FILTER_PRIORITY = [
+    "HSC-I", "HSC-R", "HSC-Z", "HSC-Y", "HSC-G",
+    "VIRCAM-Y", "VIRCAM-J", "WFCAM-J", "VIRCAM-H", "WFCAM-H", "VIRCAM-Ks", "WFCAM-K",
+    "MegaCam-uS", "MegaCam-u",
+    "HSC-NB0816", "HSC-NB0718", "HSC-NB0527", "HSC-NB0921", "HSC-NB0973", "HSC-NB0387", "HSC-NB1010",
+    "VIRCAM-NB118",
+]
+
+
 class GenericCoadd(Instrument):
     """Gen3 Butler specialization class for Subaru's Prime Focus Spectrograph."""
 
     policyName = "u2k"
     obsDataPackage = "u2k"
-    filterDefinitions = filterDefinitions
+    filterDefinitions = FILTER_DEFINITIONS
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
