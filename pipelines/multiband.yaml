@@ -1,0 +1,33 @@
+description: Measure a FiberKernel from quartzes, and generate a new fiberProfile
+instrument: lsst.obs.pfs.PrimeFocusSpectrograph
+
+tasks:
+  detection: lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask
+  mergeDetections: lsst.pipe.tasks.mergeDetections.MergeDetectionsTask
+  deblend: lsst.pipe.tasks.deblendCoaddSourcesPipeline.DeblendCoaddSourcesMultiTask
+  measure: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
+  mergeMeasurements: lsst.pipe.tasks.mergeMeasurements.MergeMeasurementsTask
+  forcedPhotCoadd: lsst.drp.tasks.forcedPhotCoadd.ForcedPhotCoaddTask
+  writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
+  transformObjectTable: lsst.pipe.tasks.postprocess.TransformObjectCatalogTask
+  consolidateObjectTable: lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask
+
+subsets:
+  pixels:
+    subset:
+      - detection
+      - mergeDetections
+      - deblend
+      - measure
+      - mergeMeasurements
+      - forcedPhotCoadd
+    description: >
+      A set of tasks to run when making measurements on coadds.
+  catalogs:
+    subset:
+      - writeObjectTable
+      - transformObjectTable
+      - consolidateObjectTable
+    description: >
+      A set of tasks to transform multiband catalogs into a parquet object
+      table.
