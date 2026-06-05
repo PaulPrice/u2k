@@ -1,3 +1,4 @@
+from lsst.utils import getPackageDir
 from lsst.pipe.tasks.postprocess import (
     TransformObjectCatalogTask, TransformObjectCatalogConnections, TransformObjectCatalogConfig
 )
@@ -18,6 +19,7 @@ class NoEpochTransformObjectCatalogConfig(
     def setDefaults(self):
         super().setDefaults()
         self.goodFlags = []  # We don't have the same flags
+        self.functorFile = getPackageDir("u2k") + "/schemas/Object.yaml"
 
 
 class NoEpochTransformObjectCatalogTask(TransformObjectCatalogTask):

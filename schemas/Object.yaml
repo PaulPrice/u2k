@@ -1,0 +1,1202 @@
+# This file defines the mapping between the columns in an object table with
+# multiple filters and their respective DPDD-style column names, as used by
+# `lsst.pipe.tasks.postprocess.TransformObjectCatalogTask`.
+# See the DPDD for more information about the output: https://lse-163.lsst.io
+funcs:
+    objectId: # the index of deepCoadd_obj IS the objectId
+        functor: Index
+    parentObjectId:
+        functor: Column
+        args: parent
+        dataset: ref
+    coord_ra:
+        # reference position for merged "ref" cat. Required by db. Not in DPDD
+        functor: RAColumn
+        dataset: ref
+    coord_dec:
+        # reference position for merged "ref" cat. Required by db. Not in DPDD
+        # coord_dec because "dec" is reserved in most SQL DBs
+        functor: DecColumn
+        dataset: ref
+    coord_raErr:
+        # error in reference position for merged "ref" cat.
+        functor: RAErrColumn
+        dataset: ref
+    coord_decErr:
+        # error in reference position for merged "ref" cat.
+        functor: DecErrColumn
+        dataset: ref
+    coord_ra_dec_Cov:
+        # covariance in reference position for merged "ref" cat.
+        functor: RADecCovColumn
+        dataset: ref
+    coord_flag:
+        functor: Column
+        args: slot_Centroid_flag
+        dataset: ref
+    ra:
+        functor: CoordColumn
+        args: coord_ra
+        dataset: meas
+    dec:
+        functor: CoordColumn
+        args: coord_dec
+        dataset: meas
+    raErr:
+        functor: RAErrColumn
+        dataset: meas
+        noDup: False
+    decErr:
+        functor: DecErrColumn
+        dataset: meas
+        noDup: False
+    ra_dec_Cov:
+        functor: RADecCovColumn
+        dataset: meas
+        noDup: False
+    # Reference band is same for all measurements
+    refBand:
+        functor: ReferenceBand
+        dataset: ref
+    # TODO DM-22241: Evaluate moving point source model
+    #  - current plan requires matching to Source Table
+    # psRadecTai: No moving point source model yet
+    # psRadec: No moving point source model yet
+    # psPm: No moving point source model yet
+    # psParallax: No moving point source model yet
+    # Assume the database will provide UDFs for Mags
+    # psCov:
+    #     Flux should be somewhere in the name?
+    #     How best to store cov matrix?
+
+    # Replace multifit-predicted parameters with other goodness-of-fit parameters
+    # e.g. number of iterations, chi2/dof, derivative of objective function
+    # psLnL:  No moving point source model yet
+    # psChi2:  No moving point source model yet
+    # psNdata: No moving point source model yet
+    psfFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: slot_PsfFlux_instFlux
+    psfFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: slot_PsfFlux_instFluxErr
+    free_psfFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: slot_PsfFlux_instFlux
+    free_psfFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: slot_PsfFlux_instFluxErr
+    free_psfFlux_flag:
+        functor: Column
+        dataset: meas
+        args: slot_PsfFlux_flag
+    # DM-22243: Replace these with g, r, i, z, y and the blessed fluxes to use for colors
+    # Need a new name like "gModelColorFlux", "gMatchedApertureGalaxyFlux", or
+    # "gMatchedApertureFlux", "gStdFlux"
+        # HSC users still debating between
+        #  1) PSF convolved undeblended aperture fluxes?
+        #  2) Scarlet outputs?
+        # In the meantime use forced CModel
+    # grStd:
+    # riStd:
+    # izStd:
+    # zyStd:
+    #  PSF GAaP flux
+    gaapPsfFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_PsfFlux_instFlux
+    gaapPsfFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_PsfFlux_instFluxErr
+    # 0.7 arcsec sigma GAaP flux
+    gaap0p7Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_0_7_instFlux
+    gaap0p7FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_0_7_instFluxErr
+    # 1.0 arcsec sigma GAaP flux
+    gaap1p0Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_1_0_instFlux
+    gaap1p0FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: ext_gaap_GaapFlux_1_15x_1_0_instFluxErr
+    # Taking Shape from meas
+    # These pixel-coordinate versions are deprecated following RFC-1081.
+    ixx:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_xx
+        dataset: meas
+    iyy:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_yy
+        dataset: meas
+    ixy:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_xy
+        dataset: meas
+    i_flag:
+        functor: Column
+        args: slot_Shape_flag
+        dataset: meas
+    # Icov: # need to compute
+    # DM-22249 Evaluate whether we want to replace IxxPSF/IyyPSF/IxyPSF w/ FWHM
+    ixxPSF:
+        functor: SinglePrecisionFloatColumn
+        args: slot_PsfShape_xx
+        dataset: meas
+    iyyPSF:
+        functor: SinglePrecisionFloatColumn
+        args: slot_PsfShape_yy
+        dataset: meas
+    ixyPSF:
+        functor: SinglePrecisionFloatColumn
+        args: slot_PsfShape_xy
+        dataset: meas
+    iPSF_flag:
+        functor: Column
+        args: slot_PsfShape_flag
+        dataset: meas
+    moments_g1:
+        functor: MomentsG1Sky
+        args:
+            - slot_Shape_xx
+            - slot_Shape_yy
+            - slot_Shape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_g2:
+        functor: MomentsG2Sky
+        args:
+            - slot_Shape_xx
+            - slot_Shape_yy
+            - slot_Shape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_trace:
+        functor: MomentsTraceSky
+        args:
+            - slot_Shape_xx
+            - slot_Shape_yy
+            - slot_Shape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_flag:
+        functor: Column
+        args: slot_Shape_flag
+        dataset: meas
+    moments_psf_g1:
+        functor: MomentsG1Sky
+        args:
+            - slot_PsfShape_xx
+            - slot_PsfShape_yy
+            - slot_PsfShape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_g2:
+        functor: MomentsG2Sky
+        args:
+            - slot_PsfShape_xx
+            - slot_PsfShape_yy
+            - slot_PsfShape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_trace:
+        functor: MomentsTraceSky
+        args:
+            - slot_PsfShape_xx
+            - slot_PsfShape_yy
+            - slot_PsfShape_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_flag:
+        functor: Column
+        args: slot_PsfShape_flag
+        dataset: meas
+    moments_psf_debiased_g1:
+        functor: MomentsG1Sky
+        args:
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xx
+            - ext_shapeHSM_HsmPsfMomentsDebiased_yy
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_debiased_g2:
+        functor: MomentsG2Sky
+        args:
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xx
+            - ext_shapeHSM_HsmPsfMomentsDebiased_yy
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_debiased_trace:
+        functor: MomentsTraceSky
+        args:
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xx
+            - ext_shapeHSM_HsmPsfMomentsDebiased_yy
+            - ext_shapeHSM_HsmPsfMomentsDebiased_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+        dataset: meas
+    moments_psf_debiased_flag:
+        functor: Column
+        args: ext_shapeHSM_HsmPsfMomentsDebiased_flag
+        dataset: meas
+    # m4: Request removal from DPDD (DM-22250)
+    # Petrosian magnitudes not yet implemented. Planning pacakge DMBP-116
+    # Redefine Kron (DM-22245) and Petrosian (DM-22244) columns to report in DPDD
+    # petroRad:
+    # petroRadErr:
+    # petroBand:
+    # petroFlux:
+    # petroFluxErr:
+    # petroRad50:
+    # petroRad50Err:
+    # petroRad90:
+    # petroRad90Err:
+    kronRad:
+        # Convert to sky coords
+        functor: SinglePrecisionFloatColumn
+        args: ext_photometryKron_KronFlux_radius
+        dataset: meas  # or forced_src?
+    # kronRadErr: # Not computed
+    # kronBand: replaced with `refBand`
+    kronFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas  # or forced_src?
+        args: ext_photometryKron_KronFlux_instFlux
+    kronFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas  # or forced_src?
+        args: ext_photometryKron_KronFlux_instFluxErr
+    # kronRad50: Need to compute DM-16313
+    # kronRad50Err: Need to compute DM-16313
+    # kronRad90: Need to compute DM-16313
+    # kronRad90Err: Need to compute DM-16313
+    # Not in DPDD. Used for QA
+    ap03Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_3_0_instFlux
+    ap03FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_3_0_instFluxErr
+    ap03Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_3_0_flag
+    # if we need to add decimal apertures call them e.g. ap04p5Flux
+    ap06Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_6_0_instFlux
+    ap06FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_6_0_instFluxErr
+    ap06Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_6_0_flag
+    ap09Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_9_0_instFlux
+    ap09FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_9_0_instFluxErr
+    ap09Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_9_0_flag
+    ap12Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_12_0_instFlux
+    ap12FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_12_0_instFluxErr
+    ap12Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_12_0_flag
+    ap17Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_17_0_instFlux
+    ap17FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_17_0_instFluxErr
+    ap17Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_17_0_flag
+    ap25Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_25_0_instFlux
+    ap25FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_25_0_instFluxErr
+    ap25Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_25_0_flag
+    ap35Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_35_0_instFlux
+    ap35FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_35_0_instFluxErr
+    ap35Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_35_0_flag
+    ap50Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_50_0_instFlux
+    ap50FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_50_0_instFluxErr
+    ap50Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_50_0_flag
+    ap70Flux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_70_0_instFlux
+    ap70FluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: base_CircularApertureFlux_70_0_instFluxErr
+    ap70Flux_flag:
+        functor: Column
+        dataset: forced_src
+        args: base_CircularApertureFlux_70_0_flag
+
+    # DM-22246: Change Ap surface brightness to fluxes in DPDD
+    # i.e. remove apNann, apMeanSb, apMeanSbSigma
+    # DM-22247: Replace Extendedness with a view or paragraph in docs on how to compute
+    refExtendedness:
+        functor: SinglePrecisionFloatColumn
+        args: base_ClassificationExtendedness_value
+        dataset: ref
+    extendedness:
+        functor: SinglePrecisionFloatColumn
+        args: base_ClassificationExtendedness_value
+        dataset: meas
+    refSizeExtendedness:
+        functor: SinglePrecisionFloatColumn
+        args: base_ClassificationSizeExtendedness_value
+        dataset: ref
+    sizeExtendedness:
+        functor: SinglePrecisionFloatColumn
+        args: base_ClassificationSizeExtendedness_value
+        dataset: meas
+    # lcPeriodic:  # Not computed. Need multi-epoch forced phot S19
+    # lcNonPeriodic:  # Not computed. Need without multi-epoch forced phot S19
+    # photoZ:  # Not computed yet
+
+    # Not in DPDD
+    blendedness:
+        functor: SinglePrecisionFloatColumn
+        args: base_Blendedness_abs
+        dataset: meas
+    # CModel is likely to be deprecated soon in favour of multiprofit
+    # (TBD on Sersic vs more complicated model)
+    cModel_dev_reff_major:
+        functor: SemimajorAxisFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_dev_ellipse_xx
+            - modelfit_CModel_dev_ellipse_yy
+            - modelfit_CModel_dev_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    cModel_dev_reff_minor:
+        functor: SemiminorAxisFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_dev_ellipse_xx
+            - modelfit_CModel_dev_ellipse_yy
+            - modelfit_CModel_dev_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    cModel_dev_theta:
+        functor: PositionAngleFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_dev_ellipse_xx
+            - modelfit_CModel_dev_ellipse_yy
+            - modelfit_CModel_dev_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    cModel_exp_reff_major:
+        functor: SemimajorAxisFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_exp_ellipse_xx
+            - modelfit_CModel_exp_ellipse_yy
+            - modelfit_CModel_exp_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    cModel_exp_reff_minor:
+        functor: SemiminorAxisFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_exp_ellipse_xx
+            - modelfit_CModel_exp_ellipse_yy
+            - modelfit_CModel_exp_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    cModel_exp_theta:
+        functor: PositionAngleFromMoments
+        dataset: meas
+        args:
+            - modelfit_CModel_exp_ellipse_xx
+            - modelfit_CModel_exp_ellipse_yy
+            - modelfit_CModel_exp_ellipse_xy
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    # bdCov: Not computed
+    cModel_chi2:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_objective
+    # bdSamples: DM-22242 Remove from the DPDD and
+    # replace with other shear estimation parameters. e.g. How e1 and e2 respond to shear.
+    cModel_devFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_dev_instFlux
+    cModel_devFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_dev_instFluxErr
+    cModel_expFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_exp_instFlux
+    cModel_expFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_exp_instFluxErr
+    cModelFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_instFlux
+    cModelFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_instFluxErr
+    cModelFlux_inner:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_instFlux_inner
+    cModel_fracDev:
+        functor: SinglePrecisionFloatColumn
+        dataset: forced_src
+        args: modelfit_CModel_fracDev
+    free_cModelFlux: # to dm-naming things
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_instFlux
+    free_cModelFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_instFluxErr
+    free_cModelFlux_inner:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_instFlux_inner
+    free_cModelFlux_flag:
+        functor: Column
+        dataset: meas
+        args: modelfit_CModel_flag
+    free_cModel_fracDev:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_fracDev
+    free_cModel_devFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_dev_instFlux
+    free_cModel_devFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_dev_instFluxErr
+    free_cModel_expFlux:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_exp_instFlux
+    free_cModel_expFluxErr:
+        functor: SinglePrecisionFloatColumn
+        dataset: meas
+        args: modelfit_CModel_exp_instFluxErr
+    # exp, dev, total, fracdev
+    # We need different ellipticities for shear measurement:
+    hsmShapeRegauss_e1:
+        functor: SinglePrecisionFloatColumn
+        args: ext_shapeHSM_HsmShapeRegauss_e1
+        dataset: meas
+    hsmShapeRegauss_e2:
+        functor: SinglePrecisionFloatColumn
+        args: ext_shapeHSM_HsmShapeRegauss_e2
+        dataset: meas
+    hsmShapeRegauss_sigma:
+        functor: SinglePrecisionFloatColumn
+        args: ext_shapeHSM_HsmShapeRegauss_sigma
+        dataset: meas
+    hsmShapeRegauss_flag:
+        functor: Column
+        args: ext_shapeHSM_HsmShapeRegauss_flag
+        dataset: meas
+    hsm_moments_30:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_30
+      dataset: meas
+    hsm_momentsPsf_30:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_30
+      dataset: meas
+    hsm_moments_21:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_21
+      dataset: meas
+    hsm_momentsPsf_21:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_21
+      dataset: meas
+    hsm_moments_12:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_12
+      dataset: meas
+    hsm_momentsPsf_12:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_12
+      dataset: meas
+    hsm_moments_03:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_03
+      dataset: meas
+    hsm_momentsPsf_03:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_03
+      dataset: meas
+    hsm_moments_40:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_40
+      dataset: meas
+    hsm_momentsPsf_40:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_40
+      dataset: meas
+    hsm_moments_31:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_31
+      dataset: meas
+    hsm_momentsPsf_31:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_31
+      dataset: meas
+    hsm_moments_22:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_22
+      dataset: meas
+    hsm_momentsPsf_22:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_22
+      dataset: meas
+    hsm_moments_13:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_13
+      dataset: meas
+    hsm_momentsPsf_13:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_13
+      dataset: meas
+    hsm_moments_04:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsSource_04
+      dataset: meas
+    hsm_momentsPsf_04:
+      functor: SinglePrecisionFloatColumn
+      args: ext_shapeHSM_HigherOrderMomentsPSF_04
+      dataset: meas
+    hsm_moments_flag:
+        functor: Column
+        args: ext_shapeHSM_HigherOrderMomentsSource_flag
+        dataset: meas
+    hsm_momentsPsf_flag:
+        functor: Column
+        args: ext_shapeHSM_HigherOrderMomentsPSF_flag
+        dataset: meas
+    inputCount:
+        functor: Column
+        args: base_InputCount_value
+        dataset: forced_src
+    footprintArea:
+        functor: Column
+        args: base_FootprintArea_value
+        dataset: ref
+    sky_object:
+        functor: Column
+        args: merge_peak_sky
+        dataset: ref
+    ebv:
+        functor: Ebv
+    # MultiProFit Two Gaussian PSF model fit parameters
+    psfModel_TwoGaussian_gauss1_sigma_x:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss1_sigma_x
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss1_sigma_y:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss1_sigma_y
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss1_rho:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss1_rho
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss1_fluxfrac:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss1_fluxfrac
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss2_sigma_x:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss2_sigma_x
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss2_sigma_y:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss2_sigma_y
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_gauss2_rho:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_gauss2_rho
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_n_iter:
+        functor: Column
+        args: TwoGaussianPsf_n_iter
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_chi2_reduced:
+        functor: SinglePrecisionFloatColumn
+        args: TwoGaussianPsf_chisq_reduced
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_unknown_flag:
+        functor: Column
+        args: TwoGaussianPsf_unknown_flag
+        dataset: psfs_multiprofit
+    psfModel_TwoGaussian_no_inputs_flag:
+        functor: Column
+        args: TwoGaussianPsf_no_inputs_flag
+        dataset: psfs_multiprofit
+    # MultiProFit multiband single exponential object model fit parameters
+    exponential_ra:
+        functor: Column
+        args: cen_ra
+        dataset: Exp_multiprofit
+    exponential_dec:
+        functor: Column
+        args: cen_dec
+        dataset: Exp_multiprofit
+    exponential_reff_x:
+        functor: SinglePrecisionFloatColumn
+        args: reff_x
+        dataset: Exp_multiprofit
+    exponential_reff_y:
+        functor: SinglePrecisionFloatColumn
+        args: reff_y
+        dataset: Exp_multiprofit
+    exponential_rho:
+        functor: SinglePrecisionFloatColumn
+        args: rho
+        dataset: Exp_multiprofit
+    exponential_reff_major:
+        functor: SemimajorAxisFromCorrelation
+        dataset: Exp_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    exponential_reff_minor:
+        functor: SemiminorAxisFromCorrelation
+        dataset: Exp_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    exponential_theta:
+        functor: PositionAngleFromCorrelation
+        dataset: Exp_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    g_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_Flux
+            - HSC-G
+        dataset: Exp_multiprofit
+    i_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_Flux
+            - HSC-I
+        dataset: Exp_multiprofit
+    r_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-R_Flux
+            - HSC-R
+        dataset: Exp_multiprofit
+    y_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_Flux
+            - HSC-Y
+        dataset: Exp_multiprofit
+    z_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_Flux
+            - HSC-Z
+        dataset: Exp_multiprofit
+    exponential_raErr:
+        functor: SinglePrecisionFloatColumn
+        args: cen_raErr
+        dataset: Exp_multiprofit
+    exponential_decErr:
+        functor: SinglePrecisionFloatColumn
+        args: cen_decErr
+        dataset: Exp_multiprofit
+    exponential_ra_dec_Cov:
+        functor: SinglePrecisionFloatColumn
+        args: cen_ra_dec_Cov
+        dataset: Exp_multiprofit
+    exponential_reff_xErr:
+        functor: SinglePrecisionFloatColumn
+        args: reff_xErr
+        dataset: Exp_multiprofit
+    exponential_reff_yErr:
+        functor: SinglePrecisionFloatColumn
+        args: reff_yErr
+        dataset: Exp_multiprofit
+    exponential_rhoErr:
+        functor: SinglePrecisionFloatColumn
+        args: rhoErr
+        dataset: Exp_multiprofit
+    g_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_FluxErr
+            - HSC-G
+        dataset: Exp_multiprofit
+    i_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_FluxErr
+            - HSC-I
+        dataset: Exp_multiprofit
+    r_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-R_FluxErr
+            - HSC-R
+        dataset: Exp_multiprofit
+    y_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_FluxErr
+            - HSC-Y
+        dataset: Exp_multiprofit
+    z_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_FluxErr
+            - HSC-Z
+        dataset: Exp_multiprofit
+    exponential_n_eval_jac:
+        functor: Column
+        args: n_eval_jac
+        dataset: Exp_multiprofit
+    exponential_n_iter:
+        functor: Column
+        args: n_iter
+        dataset: Exp_multiprofit
+    exponential_chi2_reduced:
+        functor: SinglePrecisionFloatColumn
+        args: chisq_reduced
+        dataset: Exp_multiprofit
+    exponential_delta_lnL_fit_linear:
+        functor: SinglePrecisionFloatColumn
+        args: delta_lnL_fit_linear
+        dataset: Exp_multiprofit
+    exponential_delta_lnL_fit_ps:
+        functor: SinglePrecisionFloatColumn
+        args: delta_lnL_fit_ps
+        dataset: Exp_multiprofit
+    exponential_unknown_flag:
+        functor: Column
+        args: unknown_flag
+        dataset: Exp_multiprofit
+    exponential_no_data_flag:
+        functor: Column
+        args: no_data_flag
+        dataset: Exp_multiprofit
+    # MultiProFit multiband single Sersic object model fit parameters
+    sersic_ra:
+        functor: Column
+        args: cen_ra
+        dataset: Sersic_multiprofit
+    sersic_dec:
+        functor: Column
+        args: cen_dec
+        dataset: Sersic_multiprofit
+    sersic_ra_dec_Cov:
+        functor: SinglePrecisionFloatColumn
+        args: cen_ra_dec_Cov
+        dataset: Sersic_multiprofit
+    sersic_reff_x:
+        functor: SinglePrecisionFloatColumn
+        args: reff_x
+        dataset: Sersic_multiprofit
+    sersic_reff_y:
+        functor: SinglePrecisionFloatColumn
+        args: reff_y
+        dataset: Sersic_multiprofit
+    sersic_rho:
+        functor: SinglePrecisionFloatColumn
+        args: rho
+        dataset: Sersic_multiprofit
+    sersic_reff_major:
+        functor: SemimajorAxisFromCorrelation
+        dataset: Sersic_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    sersic_reff_minor:
+        functor: SemiminorAxisFromCorrelation
+        dataset: Sersic_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    sersic_theta:
+        functor: PositionAngleFromCorrelation
+        dataset: Sersic_multiprofit
+        args:
+            - reff_x
+            - reff_y
+            - rho
+            - base_LocalWcs_CDMatrix_1_1
+            - base_LocalWcs_CDMatrix_1_2
+            - base_LocalWcs_CDMatrix_2_1
+            - base_LocalWcs_CDMatrix_2_2
+    HSC-G_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_Flux
+            - HSC-G
+        dataset: Sersic_multiprofit
+    HSC-I_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_Flux
+            - HSC-I
+        dataset: Sersic_multiprofit
+    HSC-R_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-R_Flux
+            - HSC-R
+        dataset: Sersic_multiprofit
+    HSC-Y_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_Flux
+            - HSC-Y
+        dataset: Sersic_multiprofit
+    HSC-Z_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_Flux
+            - HSC-Z
+        dataset: Sersic_multiprofit
+    sersic_index:
+        functor: SinglePrecisionFloatColumn
+        args: sersic_index
+        dataset: Sersic_multiprofit
+    sersic_raErr:
+        functor: SinglePrecisionFloatColumn
+        args: cen_raErr
+        dataset: Sersic_multiprofit
+    sersic_decErr:
+        functor: SinglePrecisionFloatColumn
+        args: cen_decErr
+        dataset: Sersic_multiprofit
+    sersic_reff_xErr:
+        functor: SinglePrecisionFloatColumn
+        args: reff_xErr
+        dataset: Sersic_multiprofit
+    sersic_reff_yErr:
+        functor: SinglePrecisionFloatColumn
+        args: reff_yErr
+        dataset: Sersic_multiprofit
+    sersic_rhoErr:
+        functor: SinglePrecisionFloatColumn
+        args: rhoErr
+        dataset: Sersic_multiprofit
+    HSC-G_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_FluxErr
+            - HSC-G
+        dataset: Sersic_multiprofit
+    HSC-I_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_FluxErr
+            - HSC-I
+        dataset: Sersic_multiprofit
+    HSC-R_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-R_FluxErr
+            - HSC-R
+        dataset: Sersic_multiprofit
+    HSC-Y_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_FluxErr
+            - HSC-Y
+        dataset: Sersic_multiprofit
+    HSC-Z_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_FluxErr
+            - HSC-Z
+        dataset: Sersic_multiprofit
+    sersic_indexErr:
+        functor: SinglePrecisionFloatColumn
+        args: sersic_indexErr
+        dataset: Sersic_multiprofit
+    sersic_n_eval_jac:
+        functor: Column
+        args: n_eval_jac
+        dataset: Sersic_multiprofit
+    sersic_n_iter:
+        functor: Column
+        args: n_iter
+        dataset: Sersic_multiprofit
+    sersic_chi2_reduced:
+        functor: SinglePrecisionFloatColumn
+        args: chisq_reduced
+        dataset: Sersic_multiprofit
+    sersic_unknown_flag:
+        functor: Column
+        args: unknown_flag
+        dataset: Sersic_multiprofit
+    sersic_no_data_flag:
+        functor: Column
+        args: no_data_flag
+        dataset: Sersic_multiprofit
+    shape_xx:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_xx
+        dataset: ref
+    shape_yy:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_yy
+        dataset: ref
+    shape_xy:
+        functor: SinglePrecisionFloatColumn
+        args: slot_Shape_xy
+        dataset: ref
+    # DM-22247: Add Star/Galaxy sep columns
+    #     - Morphological Star Galaxy Classifier (Names? float 0-1)]
+    #     - Morphological + Color (SED-based) Star Galaxy Classifier (Names? float 0-1)]
+    # DM-22248: Need to add per object Galactic extinction to post-processing
+refFlags:
+    # refFlags are columns taken without translation from the ref table
+    - detect_isPatchInner
+    - detect_isPrimary
+    - detect_isTractInner
+    - detect_isIsolated
+    - detect_fromBlend
+    - detect_isDeblendedSource
+    - detect_isDeblendedModelSource
+    - merge_peak_sky
+    - deblend_peak_center_x
+    - deblend_peak_center_y
+    - deblend_chi2
+    - deblend_blendId
+    - deblend_blendNChild
+    - deblend_parentNPeaks
+    - deblend_parentNChild
+    - slot_Shape_flag
+flags:
+    # flags are columns taken and exploded per-band from the meas tables
+    - base_Blendedness_flag
+    - base_PixelFlags_flag_bad
+    - base_PixelFlags_flag_clipped
+    - base_PixelFlags_flag_clippedCenter
+    - base_PixelFlags_flag_cr
+    - base_PixelFlags_flag_crCenter
+    - base_PixelFlags_flag_edge
+    - base_PixelFlags_flag_inexact_psf
+    - base_PixelFlags_flag_inexact_psfCenter
+    - base_PixelFlags_flag_interpolated
+    - base_PixelFlags_flag_interpolatedCenter
+    - base_PixelFlags_flag_nodata
+    - base_PixelFlags_flag_offimage
+    - base_PixelFlags_flag_saturated
+    - base_PixelFlags_flag_saturatedCenter
+    - base_PixelFlags_flag_sensor_edge
+    - base_PixelFlags_flag_sensor_edgeCenter
+    - base_PixelFlags_flag_suspect
+    - base_PixelFlags_flag_suspectCenter
+    - base_ClassificationExtendedness_flag
+    - base_ClassificationSizeExtendedness_flag
+    - base_InvalidPsf_flag
+    - deblend_blendedness
+    - deblend_dataCoverage
+    - deblend_fluxOverlap
+    - deblend_fluxOverlapFraction
+    - deblend_zeroFlux
+    - slot_ApFlux_flag
+    - slot_ApFlux_flag_apertureTruncated
+    - slot_ApFlux_flag_sincCoeffsTruncated
+    - slot_Centroid_flag
+    - ext_photometryKron_KronFlux_flag
+    - ext_photometryKron_KronFlux_flag_bad_radius
+    - ext_photometryKron_KronFlux_flag_bad_shape
+    - ext_photometryKron_KronFlux_flag_bad_shape_no_psf
+    - ext_photometryKron_KronFlux_flag_edge
+    - ext_photometryKron_KronFlux_flag_no_fallback_radius
+    - ext_photometryKron_KronFlux_flag_no_minimum_radius
+    - ext_photometryKron_KronFlux_flag_small_radius
+    - ext_photometryKron_KronFlux_flag_used_minimum_radius
+    - ext_photometryKron_KronFlux_flag_used_psf_radius
+forcedFlags:
+    # - forced source
+    - base_InputCount_flag
+    - base_InputCount_flag_noInputs
+    - slot_PsfFlux_area
+    - slot_PsfFlux_flag
+    - slot_PsfFlux_flag_apCorr
+    - slot_PsfFlux_flag_edge
+    - slot_PsfFlux_flag_noGoodPixels
+    - modelfit_CModel_flag
+    - modelfit_CModel_flag_apCorr
+    - ext_gaap_GaapFlux_flag
+    - ext_gaap_GaapFlux_flag_edge
+flag_rename_rules:
+    # Taken from db-meas-forced
+    - ['modelfit_C', 'c']
+    - ['base_PixelFlags_flag', 'pixelFlags']
+    - ['base_CircularApertureFlux', 'apFlux']
+    - ['ext_convolved_', '']
+    - ['ext_gaap_GaapFlux_1_15x_0_7', 'gaap0p7Flux']
+    - ['ext_gaap_GaapFlux_1_15x_1_0', 'gaap1p0Flux']
+    - ['ext_gaap_GaapFlux_1_15x', 'gaapFlux']
+    - ['ext_gaap_GaapFlux', 'gaapFlux']
+    - ['undeblended_base', 'undeblended']
+    - ['undeblended_ext_photometryKron', 'undeblended']
+    - ['ext_photometryKron_KronFlux', 'kronFlux']
+    - ['slot_Centroid', 'centroid']
+    - ['slot_Psf', 'psf']
+    - ['slot_Shape', 'shape']
+    - ['slot_ApFlux', 'apFlux']
+    - ['base_Blendedness', 'blendedness']
+    - ['base_PixelFlags_flag', 'pixelFlags']
+    - ['base_InvalidPsf_flag', 'invalidPsfFlag']
+    - ['base_ClassificationE', 'e']
+    - ['base_ClassificationS', 's']
+    - ['base_Psf', 'psf']
+    - ['base_CircularApertureFlux', 'apFlux']
+    - ['base_FootprintArea', 'footprintArea']
+    - ['base_Jacobian', 'jacobian']
+    - ['base_Input', 'input']
+    - ['ext_convolved_', '']
+    - ['ext_shapeHSM_HigherOrderMoments', 'hsm_HigherOrderMoments']

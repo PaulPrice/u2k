@@ -38,6 +38,7 @@ tasks:
 
   writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
   transformObjectTable: u2k.transformObjects.NoEpochTransformObjectCatalogTask
+  consolidateObjectTable: lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask
 
 subsets:
   pixels:
@@ -64,6 +65,7 @@ subsets:
     subset:
       - writeObjectTable
       - transformObjectTable
+      - consolidateObjectTable
     description: >
       A set of tasks to transform multiband catalogs into a parquet object
       table.
