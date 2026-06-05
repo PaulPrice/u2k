@@ -47,3 +47,28 @@ Set up `~/.lsst/db-auth.yaml` and `~/.pgpass`
     pipetask run -b $REPO -i coadds,skymaps -o RERUN_NAME -p '$U2K_DIR/pipelines/multiband.yaml' -d "tract = 12345 AND patch = 67" --register-dataset-types
 
 You can drop the `--register-dataset-types` after running the pipeline once.
+
+
+## Reading the data
+
+From python:
+
+    >>> from lsst.daf.butler import Butler
+    >>> butler = Butler("/path/to/repo", collections="my_collection")
+    >>> onePatch = butler.get("objectTable", skymap="hsc", tract=9812, patch=13)
+    >>> fullTract = butler.get("objectTable_tract", skymap="hsc", tract=9812)
+
+The main data products are:
+* `objectTable`: a parquet file that the butler reads as a pandas `DataFrame`,
+  containing all data for a patch (multiple bands merged).
+* `objectTable_tract`: a similar file, but with patches within a tract merged.
+
+
+## Tracts of interest
+
+* UD-Cosmos: 9570, 9571, 9812, 9813, 9814, 10054, 10055
+* UD-SXDS: 8523, 8524, 8765, 8766
+* D-Cosmos: 9569, 9570, 9571, 9572, 9812, 9813, 9814, 10054, 10055, 10056
+* D-XMM-LSS: 8282, 8283, 8284, 8523, 8524, 8525, 8765, 8766, 8767
+* D-ELAIS-N1: 16984, 16985, 17129, 17130, 17131, 17270, 17271, 17272, 17406, 17407
+* D-DEEP2-3: 9219, 9220, 9221, 9462, 9463, 9464, 9465, 9706, 9707, 9708
