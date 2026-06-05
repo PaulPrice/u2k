@@ -22,7 +22,21 @@ these need to be reformatted (warped to the skymap, PSF and variance measured) a
 
 ## Butler setup
 
+### Small-scale butler with SQLite
+
+This butler is not suitable for large-scale, parallel processing runs,
+but may be helpful for testing on a single tract.
+
     butler create $REPO
+    butler register-instrument $REPO u2k.instrument.GenericCoadd
+    butler register-skymap $REPO -C $U2K_DIR/config/skymap_rings.py -c name=hsc
+    u2k_ingest.py $REPO /path/to/data coadds --id tract=9812  # only ingesting a single tract!
+
+### Production butler with PostgreSQL
+
+Set up `~/.lsst/db-auth.yaml` and `~/.pgpass`
+
+    butler create $REPO --seed-config $U2K_DIR/butler/butler.yaml --override
     butler register-instrument $REPO u2k.instrument.GenericCoadd
     butler register-skymap $REPO -C $U2K_DIR/config/skymap_rings.py -c name=hsc
     u2k_ingest.py $REPO /path/to/data coadds

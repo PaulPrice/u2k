@@ -1,0 +1,3 @@
+registry:
+  db: postgresql+psycopg2://u2k@db.sn809:5432/u2k
+  namespace: u2k
