@@ -6,7 +6,7 @@ imports:
 
 tasks:
   detection:
-    class: lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask
+    class: u2k.detection.DetectCoaddSourcesTask
     config:
       file: $U2K_DIR/config/packer.py
       useCellCoadds: false
