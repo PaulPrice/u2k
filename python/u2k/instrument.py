@@ -30,6 +30,10 @@ FILTER_DEFINITIONS = FilterDefinitionCollection(
     FilterDefinition("WFCAM-H", "WFCAM-H", "UKIRT Wide Field Camera H-band"),
     FilterDefinition("WFCAM-J", "WFCAM-J", "UKIRT Wide Field Camera J-band"),
     FilterDefinition("WFCAM-K", "WFCAM-K", "UKIRT Wide Field Camera K-band"),
+    FilterDefinition("WIRCAM-J", "WIRCAM-J", "CFHT WIRCam J-band"),
+    FilterDefinition("WIRCAM-H", "WIRCAM-H", "CFHT WIRCam H-band"),
+    FilterDefinition("WIRCAM-K", "WIRCAM-K", "CFHT WIRCam K-band"),
+    FilterDefinition("WFCAM-WIRCAM-J", "WFCAM-WIRCAM-J", "UKIRT WFCAM + CFHT WIRCam J-band"),
     FilterDefinition("MegaCam-u", "MegaCam-u", "CFHT MegaCam u-band"),
     FilterDefinition("MegaCam-uS", "MegaCam-uS", "CFHT MegaCam u*-band"),
 )
@@ -37,7 +41,10 @@ FILTER_DEFINITIONS = FilterDefinitionCollection(
 
 FILTER_PRIORITY = [
     "HSC-I", "HSC-R", "HSC-Z", "HSC-Y", "HSC-G",
-    "VIRCAM-Y", "VIRCAM-J", "WFCAM-J", "VIRCAM-H", "WFCAM-H", "VIRCAM-Ks", "WFCAM-K",
+    "VIRCAM-Y",
+    "VIRCAM-J", "WFCAM-J", "WIRCAM-J", "WFCAM-WIRCAM-J",
+    "VIRCAM-H", "WFCAM-H", "WIRCAM-H",
+    "VIRCAM-Ks", "WFCAM-K", "WIRCAM-K",
     "MegaCam-uS", "MegaCam-u",
     "HSC-NB0816", "HSC-NB0718", "HSC-NB0527", "HSC-NB0921", "HSC-NB0973", "HSC-NB0387", "HSC-NB1010",
     "VIRCAM-NB118",
