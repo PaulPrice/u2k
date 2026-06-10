@@ -1,0 +1,67 @@
+wmsServiceClass: lsst.ctrl.bps.parsl.service.ParslService
+#computeSite: tiger_1n_112c_5h
+site:
+  local:
+    class: lsst.ctrl.bps.parsl.sites.Local
+    cores: 12
+  tiger_1n_112c_5h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 112
+    walltime: "05:00:00"
+    singleton: True
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_1n_56c_5h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 56
+    walltime: "05:00:00"
+    singleton: True
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_1n_28c_5h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 28
+    walltime: "05:00:00"
+    singleton: True
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_2n_112c_5h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 2
+    cores_per_node: 112
+    walltime: "05:00:00"
+    singleton: True
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_4n_112c_5h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 4
+    cores_per_node: 112
+    walltime: "05:00:00"
+    singleton: True
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_1n4_112c_24h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 112
+    walltime: "24:00:00"
+    max_blocks: 4
+    mem_per_node: 980
+    account: rubin
+  tiger_1n8_112c_24h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 112
+    walltime: "24:00:00"
+    max_blocks: 8
+    mem_per_node: 980
+    account: rubin
