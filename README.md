@@ -72,3 +72,30 @@ The main data products are:
 * D-XMM-LSS: 8282, 8283, 8284, 8523, 8524, 8525, 8765, 8766, 8767
 * D-ELAIS-N1: 16984, 16985, 17129, 17130, 17131, 17270, 17271, 17272, 17406, 17407
 * D-DEEP2-3: 9219, 9220, 9221, 9462, 9463, 9464, 9465, 9706, 9707, 9708
+
+
+## New data
+
+### ASIAA
+
+ASIAA have provided coadded images from CFHT-WIRCAM and UKIRT-WFCAM,
+along with exposure time maps.
+
+    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_DEEP23-K-combine.fits time.WF_DEEP23-K-combine.fits -j 10 > $REPO/ingest/WF_DEEP23-K.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-NE-H-combine.fits time.WF_ECOSMOS-NE-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NE-H.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-NE-K-combine.fits time.WF_ECOSMOS-NE-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NE-K.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-NW-H-combine.fits time.WF_ECOSMOS-NW-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-H.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-NW-J-combine.fits time.WF_ECOSMOS-NW-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-NW-K-combine.fits time.WF_ECOSMOS-NW-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-K.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-SE-H-combine.fits time.WF_ECOSMOS-SE-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-H.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-SE-J-combine.fits time.WF_ECOSMOS-SE-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-SE-K-combine.fits time.WF_ECOSMOS-SE-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-K.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-SW-H-combine.fits time.WF_ECOSMOS-SW-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-H.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-SW-J-combine.fits time.WF_ECOSMOS-SW-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-SW-K-combine.fits time.WF_ECOSMOS-SW-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-K.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-WIRCAM-J map.WF+WI_COSMOS-J.fits time.WF+WI_COSMOS-J.fits -j 10 > $REPO/ingest/WF+WI_COSMOS-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WFCAM-WIRCAM-J map.WF+WI_DEEP23-J.fits time.WF+WI_DEEP23-J.fits -j 10 > $REPO/ingest/WF+WI_DEEP23-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_COSMOS_a-J.fits time.WI_COSMOS_a-J.fits -j 10 > $REPO/ingest/WI_COSMOS_a-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_COSMOS_d-J.fits time.WI_COSMOS_d-J.fits -j 10 > $REPO/ingest/WI_COSMOS_d-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_N-J.fits time.WI_XMMLSS_N-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_N-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_S-J.fits time.WI_XMMLSS_S-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_S-J.log 2>&1
