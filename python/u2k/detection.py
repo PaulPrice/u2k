@@ -66,7 +66,7 @@ def generateSkyObjects(mask, seed, config):
     xMax, yMax = box.getMax()
 
     # Find bounds of unmasked pixels
-    maskVal = mask.getPlaneBitMask(config.avoidMask)
+    maskVal = mask.getPlaneBitMask("NO_DATA")
     unmasked = (mask.getArray() & maskVal) == 0
     unmaskedColumns = np.any(unmasked, axis=0)
     unmaskedRows = np.any(unmasked, axis=1)
