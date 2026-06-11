@@ -2,6 +2,8 @@ import logging
 
 __all__ = ("getLogger",)
 
+_LOGGERS = {}
+
 
 def getLogger(name, level=logging.INFO):
     """Return a logger object
@@ -21,6 +23,8 @@ def getLogger(name, level=logging.INFO):
     logger: logging.Logger
         Logger object.
     """
+    if name in _LOGGERS:
+        return _LOGGERS[name]
     logger = logging.getLogger(name)
     logger.setLevel(level)
     consoleHandler = logging.StreamHandler()
@@ -28,4 +32,5 @@ def getLogger(name, level=logging.INFO):
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     consoleHandler.setFormatter(formatter)
     logger.addHandler(consoleHandler)
+    _LOGGERS[name] = logger
     return logger
