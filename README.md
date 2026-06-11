@@ -99,3 +99,15 @@ along with exposure time maps.
     u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_COSMOS_d-J.fits time.WI_COSMOS_d-J.fits -j 10 > $REPO/ingest/WI_COSMOS_d-J.log 2>&1
     u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_N-J.fits time.WI_XMMLSS_N-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_N-J.log 2>&1
     u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_S-J.fits time.WI_XMMLSS_S-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_S-J.log 2>&1
+
+### VISTA VEILS
+
+The ESO data is delivered with munged filenames, and need to get renamed:
+
+    cat readme_56f96d63-b148-48c3-8591-b5df83c13508.txt | awk '$2 ~ /^ADP/ {print "test -f",$2,"&& mv",$2,$3}' | sh
+
+Then ingest:
+
+    u2k_veils.py $REPO veils . -j 10
+
+(The code iterates over the bands, using hardwired globs.)
