@@ -50,6 +50,9 @@ FILTER_PRIORITY = [
     "VIRCAM-NB118",
 ]
 
+# XXX TEMPORARY: until run1 is complete, we need to preserve this list
+FILTER_PRIORITY = ['HSC-I', 'HSC-R', 'HSC-Z', 'HSC-Y', 'HSC-G', 'VIRCAM-Y', 'VIRCAM-J', 'WFCAM-J', 'VIRCAM-H', 'WFCAM-H', 'VIRCAM-Ks', 'WFCAM-K', 'MegaCam-uS', 'MegaCam-u', 'HSC-NB0816', 'HSC-NB0718', 'HSC-NB0527', 'HSC-NB0921', 'HSC-NB0973', 'HSC-NB0387', 'HSC-NB1010', 'VIRCAM-NB118']
+
 
 class GenericCoadd(Instrument):
     """Gen3 Butler specialization class for Subaru's Prime Focus Spectrograph."""

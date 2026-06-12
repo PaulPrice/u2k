@@ -1,22 +1,26 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor
 from logging import Logger
 
 import numpy as np
 import astropy.io.fits
 
-from lsst.afw.image import ExposureF, ImageF, makeMaskedImage, makeExposure, PhotoCalib
+from lsst.afw.image import ExposureF, ImageF, makeMaskedImage, makeExposure, PhotoCalib, FilterLabel
 from lsst.afw.fits import readMetadata
 from lsst.afw.math import Warper
 from lsst.afw.geom import SkyWcs
 from lsst.daf.butler import Butler
 from lsst.geom import Point2D
-from lsst.meas.algorithms.subtractBackground import SubtractBackgroundTask
+from lsst.meas.algorithms import CoaddPsf, CoaddPsfConfig
+from lsst.pipe.tasks.coaddInputRecorder import CoaddInputRecorderTask
 from lsst.skymap import PatchInfo
 
 from .butler import registerDatasetType
+from .calibrateImage import CoaddCalibrateImageTask
 from .logging import getLogger
-from .math import robustRms
+from .math import renormalizeVariance
+from .processPool import ProcessPool
 
 
 def readVeils(filename: str) -> ExposureF:
@@ -37,12 +41,11 @@ def warpVeilsPatch(
     datasetType: str,
     dataId: dict[str, str|int],
     exposureList: list[ExposureF],
-    confList: list[ImageF],
     patchInfo: PatchInfo,
     warpConfig: Warper.ConfigClass,
     overwrite: bool = False,
 ):
-    """Warp an ASIAA image into a single patch of our skymap system
+    """Warp VEILS images into a single patch of our skymap system
     
     Parameters
     ----------
@@ -56,8 +59,6 @@ def warpVeilsPatch(
         The data ID for the warped image.
     exposureList : list of `lsst.afw.image.ExposureF`
         The list of exposures to warp and coadd.
-    confList : list of `lsst.afw.image.ImageF`
-        The list of confidence maps to warp.
     patchInfo : `lsst.skymap.PatchInfo`
         The patch to warp into.
     warpConfig : `lsst.afw.math.Warper.ConfigClass`
@@ -76,51 +77,94 @@ def warpVeilsPatch(
 
     log.info("Warping %d exposures into patch %s", len(exposureList), dataId)
 
+    task = CoaddInputRecorderTask(log=log, name="inputRecorder")
+    inputRecorder = task.makeCoaddTempExpRecorder(0, len(exposureList))
+
     warper = Warper.fromConfig(warpConfig)
     image = ImageF(patchInfo.getOuterBBox())
     image[:] = 0.0
-    sumConf = np.zeros_like(image.array)
-    for exposure, conf in zip(exposureList, confList):
-        zp = exposure.metadata["PHOTZP"]
-        photoCalib = PhotoCalib(3631e9 * 10**(-0.4*zp))
-        calibrated = photoCalib.calibrateImage(exposure.maskedImage)
-
-        warpedImage = warper.warpImage(
+    sumWeight = np.zeros_like(image.array)
+    totalGood = 0
+    for exposure in exposureList:
+        warped = warper.warpExposure(
             patchInfo.getWcs(),
-            calibrated.image,
+            exposure,
             exposure.getWcs(),
             maxBBox=patchInfo.getOuterBBox(),
             destBBox=patchInfo.getOuterBBox(),
         )
-        warpedConf = warper.warpImage(
-            patchInfo.getWcs(),
-            conf,
-            exposure.getWcs(),
-            maxBBox=patchInfo.getOuterBBox(),
-            destBBox=patchInfo.getOuterBBox(),
-        )
-        good = np.isfinite(warpedImage.array) & (warpedConf.array > 0)
-        image.array[good] += warpedImage.array[good]*warpedConf.array[good]
-        sumConf[good] += warpedConf.array[good]
+        good = np.isfinite(warped.image.array) & (warped.variance.array > 0)
+        weight = 1.0/warped.variance.array[good]
+        image.array[good] += warped.image.array[good]*weight
+        sumWeight[good] += weight
+        numGood = np.sum(good)
+        totalGood += numGood
+        inputRecorder.addCalExp(exposure, 0, numGood)
 
-    good = np.isfinite(sumConf) & (sumConf > 0)
+    good = np.isfinite(sumWeight) & (sumWeight > 0)
     log.info("Patch %s has %d good pixels", dataId, np.sum(good))
-    image.array[good] /= sumConf[good]
-    exposure = makeExposure(makeMaskedImage(image))
+    image.array[good] /= sumWeight[good]
+    coadd = makeExposure(makeMaskedImage(image))
 
-    exposure.mask.array[~good] |= exposure.mask.getPlaneBitMask("NO_DATA")
-    exposure.variance.array[good] = 1.0/sumConf[good]
-    exposure.variance.array[~good] = np.nan
-
-    # Calibrate the variance plane
-    sigNoise = exposure.image.array/np.sqrt(exposure.variance.array)
-    rms = robustRms(sigNoise[good])
-    exposure.variance.array *= rms**2
+    coadd.mask.array[~good] |= coadd.mask.getPlaneBitMask("NO_DATA")
+    coadd.variance.array[good] = 1.0/sumWeight[good]
+    coadd.variance.array[~good] = np.nan
+    renormalizeVariance(coadd.maskedImage)
 
     # Set the photometric calibration
-    exposure.setPhotoCalib(PhotoCalib(1.0))
-    exposure.metadata["BUNIT"] = "nJy"
-    butler.put(exposure, datasetType, dataId=dataId)
+    coadd.setPhotoCalib(PhotoCalib(1.0))
+    coadd.metadata["BUNIT"] = "nJy"
+
+    # Set the PSF and aperture corrections
+    inputRecorder.finish(coadd, totalGood)
+    coadd.setPsf(CoaddPsf(
+        inputRecorder.coaddInputs.ccds,
+        patchInfo.getWcs(),
+        CoaddPsfConfig().makeControl(),
+    ))
+
+    butler.put(coadd, datasetType, dataId=dataId)
+
+
+def calibrateVeils(
+    exposure: ExposureF,
+    conf: ImageF,
+    log: Logger,
+    calibrateConfig: CoaddCalibrateImageTask.ConfigClass,
+) -> ExposureF:
+    """Calibrate a VEILS image
+
+    Parameters
+    ----------
+    dataId : any
+        An identifier, used for logging purposes.
+    exposure : `lsst.afw.image.ExposureF`
+        The image to calibrate.
+    conf : `lsst.afw.image.ImageF`
+        The confidence image (inverse variance as a function of position).
+    log : `logging.Logger`
+        Logger to use for logging messages.
+    calibrateConfig : `u2k.CoaddCalibrateImageTask.ConfigClass`
+        Configuration for the calibration.
+
+    Returns
+    -------
+    calibrated : `lsst.afw.image.ExposureF`
+        The calibrated image.
+    """
+    good = np.isfinite(conf.array) & (conf.array > 0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        variance = 1.0/conf.array
+    exposure.variance.array[:] = variance
+    exposure.mask.array[~good] |= exposure.mask.getPlaneBitMask("NO_DATA")
+    renormalizeVariance(exposure.maskedImage)
+
+    zp = exposure.metadata["PHOTZP"]
+    exposure.setPhotoCalib(PhotoCalib(3631e9 * 10**(-0.4*zp)))
+
+    task = CoaddCalibrateImageTask(config=calibrateConfig, log=log)
+    task.run(exposure=exposure)
+    return exposure
 
 
 def warpVeils(
@@ -130,10 +174,10 @@ def warpVeils(
     band: str,
     *,
     skymapName: str = "hsc",
-    datasetType: str = "deepCoadd_warp",
+    datasetType: str = "deepCoadd",
     sample: float = 500,
     warpConfig: Warper.ConfigClass = Warper.ConfigClass(),
-    backgroundConfig: SubtractBackgroundTask.ConfigClass = SubtractBackgroundTask.ConfigClass(),
+    calibrateConfig: CoaddCalibrateImageTask.ConfigClass = CoaddCalibrateImageTask.ConfigClass(),
     workers: int = 1,
     overwrite: bool = False,
 ):
@@ -158,8 +202,8 @@ def warpVeils(
         Number of pixels to sample when determining the overlap.
     warpConfig : `lsst.afw.math.Warper.ConfigClass`, optional
         Configuration for the warping.
-    backgroundConfig : `lsst.meas.algorithms.subtractBackground.SubtractBackgroundTask.ConfigClass`, optional
-        Configuration for the background subtraction.
+    calibrateConfig : `u2k.CoaddCalibrateImageTask.ConfigClass`, optional
+        Configuration for the calibration.
     workers : `int`, optional
         Number of worker processes to use for warping the patches.
     overwrite : `bool`, optional
@@ -171,21 +215,8 @@ def warpVeils(
     registerDatasetType(butler.registry, datasetType, ("band", "tract", "patch", "skymap"), "ExposureF")
     skymap = butler.get("skyMap", collections="skymaps", skymap=skymapName)
 
-    # Background subtraction
-    bgTask = SubtractBackgroundTask(config=backgroundConfig, log=log)
-    for exposure, conf in zip(exposureList, confList):
-        good = np.isfinite(conf.array) & (conf.array > 0)
-        with np.errstate(divide="ignore", invalid="ignore"):
-            variance = 1.0/conf.array
-        exposure.variance.array[:] = variance
-        exposure.mask.array[~good] |= exposure.mask.getPlaneBitMask("NO_DATA")
-
-        with np.errstate(divide="ignore", invalid="ignore"):
-            sigNoise = exposure.image.array/np.sqrt(exposure.variance.array)
-        rms = robustRms(sigNoise[good])
-        exposure.variance.array *= rms**2
-
-        bgTask.run(exposure)
+    for exposure in exposureList:
+        exposure.setFilter(FilterLabel.fromBandPhysical(band, band))
 
     exposureToPatches = [set() for _ in exposureList]
     for ii, exposure in enumerate(exposureList):
@@ -210,36 +241,29 @@ def warpVeils(
         for patch in patches:
             patchToIndices[patch].append(ii)
 
-    executor = ProcessPoolExecutor(workers)
-    jobs = []
-    for tractPatch in patchToIndices:
-        tractId, patchId = tractPatch
-        indices = patchToIndices[tractPatch]
+    pool = ProcessPool(workers)
+    calibrated = pool.map(
+        calibrateVeils,
+        exposureList,
+        confList,
+        log=log,
+        calibrateConfig=calibrateConfig,
+    )
 
-        dataId = dict(instrument="u2k", band=band, tract=tractId, patch=patchId, skymap=skymapName)
-        patchInfo = skymap[tractId][patchId]
-        jobs.append(
-            executor.submit(
+    with pool:
+        for tractPatch in patchToIndices:
+            tractId, patchId = tractPatch
+            indices = patchToIndices[tractPatch]
+            dataId = dict(instrument="u2k", band=band, tract=tractId, patch=patchId, skymap=skymapName)
+            patchInfo = skymap[tractId][patchId]
+            pool.submit(
                 warpVeilsPatch,
                 log,
                 butler,
                 datasetType,
                 dataId,
-                [exposureList[ii] for ii in indices],
-                [confList[ii] for ii in indices],
+                [calibrated[ii] for ii in indices],
                 patchInfo,
                 warpConfig,
                 overwrite,
             )
-        )
-
-    try:
-        for job in jobs:
-            job.result()
-    except Exception as exc:
-        log.error("Error warping patch: %s", exc)
-        for jj in jobs:
-            jj.cancel()
-        raise
-    finally:
-        executor.shutdown(wait=True)

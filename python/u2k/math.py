@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.typing import ArrayLike
+from lsst.afw.image import MaskedImage
 
 __all__ = ("robustRms",)
 
@@ -28,3 +29,30 @@ def robustRms(array: ArrayLike, nanSafe=False) -> float:
         return np.nan
     lq, uq = np.percentile(array, (25.0, 75.0))
     return 0.741 * (uq - lq)
+
+
+def renormalizeVariance(maskedImage: MaskedImage) -> float:
+    """Renormalize the variance plane so that the image RMS matches expectation
+
+    Parameters
+    ----------
+    maskedImage : `lsst.afw.image.MaskedImage`
+        The masked image for which to renormalize the variance.
+
+    Returns
+    -------
+    rms : `float`
+        The square-root of the normalization factor that was applied to the
+        variance plane.
+    """
+        
+    good = np.isfinite(maskedImage.image.array)
+    good &= (maskedImage.variance.array > 0)
+    good &= (maskedImage.mask.array & maskedImage.mask.getPlaneBitMask("NO_DATA") == 0)
+
+    median = np.median(maskedImage.image.array[good])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        sigNoise = (maskedImage.image.array - median)/np.sqrt(maskedImage.variance.array)
+    rms = robustRms(sigNoise[good])
+    maskedImage.variance.array *= rms**2
+    return rms

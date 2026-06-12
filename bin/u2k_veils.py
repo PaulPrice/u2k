@@ -7,9 +7,9 @@ from glob import glob
 from lsst.afw.image import ImageF
 from lsst.afw.math import Warper
 from lsst.daf.butler import Butler
-from lsst.meas.algorithms.subtractBackground import SubtractBackgroundTask
 
 from u2k.veils import warpVeils, readVeils
+from u2k.calibrateImage import CoaddCalibrateImageTask
 
 
 def main():
@@ -18,7 +18,7 @@ def main():
     parser.add_argument("run", help="The run to use for the warped images")
     parser.add_argument("source", help="Source directory for the images")
     parser.add_argument(
-        "--datasetType", default="deepCoadd_warp", help="The dataset type name for the warped image"
+        "--datasetType", default="deepCoadd", help="The dataset type name for the warped image"
     )
     parser.add_argument("--skymapName", default="hsc", help="The name of the skymap to warp into")
     parser.add_argument(
@@ -28,7 +28,7 @@ def main():
         help="The spacing at which to sample the input image when determining the overlap.",
     )
     parser.add_argument("--warpConfig", help="Path to a config file for the warping.")
-    parser.add_argument("--backgroundConfig", help="Path to a config file for the background subtraction.")
+    parser.add_argument("--calibrateConfig", help="Path to a config file for the calibration.")
     parser.add_argument(
         "--workers",
         "-j",
@@ -49,9 +49,9 @@ def main():
     warpConfig = Warper.ConfigClass()
     if args.warpConfig:
         warpConfig.load(args.warpConfig)
-    backgroundConfig = SubtractBackgroundTask.ConfigClass()
-    if args.backgroundConfig:
-        backgroundConfig.load(args.backgroundConfig)
+    calibrateConfig = CoaddCalibrateImageTask.ConfigClass()
+    if args.calibrateConfig:
+        calibrateConfig.load(args.calibrateConfig)
 
     for band, expGlob, confGlob in (
         ("VIRCAM-J", "XMM_Pointing_?_3?x_J_p?.fits.fz", "XMM_Pointing_?_3?x_J_p?_conf.fits.fz"),
@@ -76,7 +76,7 @@ def main():
             datasetType=args.datasetType,
             sample=args.sample,
             warpConfig=warpConfig,
-            backgroundConfig=backgroundConfig,
+            calibrateConfig=calibrateConfig,
             workers=args.workers,
             overwrite=args.overwrite,
         )
