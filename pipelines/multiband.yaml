@@ -38,7 +38,7 @@ tasks:
 
   writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
   transformObjectTable: u2k.transformObjects.NoEpochTransformObjectCatalogTask
-  consolidateObjectTable: lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask
+  consolidateObjectTable: u2k.transformObjects.ConsolidateObjectTableTask
 
 subsets:
   pixels:
