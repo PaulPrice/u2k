@@ -4,11 +4,10 @@ import os
 from argparse import ArgumentParser
 from glob import glob
 
-from lsst.afw.image import ImageF
 from lsst.afw.math import Warper
 from lsst.daf.butler import Butler
 
-from u2k.veils import warpVeils, readVeils
+from u2k.veils import warpVeils, readVeils, readVeilsConf
 from u2k.calibrateImage import CoaddCalibrateImageTask
 
 
@@ -64,8 +63,11 @@ def main():
                 f"Number of exposures ({len(exposureNames)}) and confs ({len(confNames)}) "
                 f"do not match for band {band}"
             )
-        exposureList = [readVeils(fn) for fn in exposureNames]
-        confList = [ImageF(fn) for fn in confNames]
+        exposureList = []
+        confList = []
+        for expName, confName in zip(exposureNames, confNames):
+            exposureList += readVeils(expName)
+            confList += readVeilsConf(confName)
 
         warpVeils(
             butler,

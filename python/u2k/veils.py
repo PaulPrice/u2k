@@ -25,14 +25,38 @@ from .processPool import ProcessPool
 
 def readVeils(filename: str) -> ExposureF:
     """Read a VEILS image.
+
+    Parameters
+    ----------
+    filename : `str`
+        The path to the image file.
     """
+    exposureList = []
     with astropy.io.fits.open(filename) as fits:
-        image = fits[1].data.astype(np.float32)
-    header = readMetadata(filename)
-    image = ImageF(image)
-    exposure = makeExposure(makeMaskedImage(image), SkyWcs(header))
-    exposure.setMetadata(header)
-    return exposure
+        for ii in range(16):
+            image = fits[ii + 1].data.astype(np.float32)
+            header = readMetadata(filename, hdu=ii + 1)
+            image = ImageF(image)
+            exposure = makeExposure(makeMaskedImage(image), SkyWcs(header))
+            exposure.setMetadata(header)
+            exposureList.append(exposure)
+    return exposureList
+
+
+def readVeilsConf(filename: str) -> list[ImageF]:
+    """Read a VEILS confidence image.
+
+    Parameters
+    ----------
+    filename : `str`
+        The path to the confidence image file.
+    """
+    confList = []
+    with astropy.io.fits.open(filename) as fits:
+        for ii in range(16):
+            conf = fits[ii + 1].data.astype(np.float32)
+            confList.append(ImageF(conf))
+    return confList
 
 
 def warpVeilsPatch(
@@ -122,6 +146,8 @@ def warpVeilsPatch(
         patchInfo.getWcs(),
         CoaddPsfConfig().makeControl(),
     ))
+
+    coadd.setWcs(patchInfo.getWcs())
 
     butler.put(coadd, datasetType, dataId=dataId)
 
