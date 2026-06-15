@@ -803,35 +803,269 @@ funcs:
             - base_LocalWcs_CDMatrix_1_2
             - base_LocalWcs_CDMatrix_2_1
             - base_LocalWcs_CDMatrix_2_2
-    g_exponentialFlux:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-G_Flux
-            - HSC-G
-        dataset: Exp_multiprofit
-    i_exponentialFlux:
+    HSC-I_exponentialFlux:
         functor: MultibandSinglePrecisionFloatColumn
         args:
             - HSC-I_Flux
             - HSC-I
         dataset: Exp_multiprofit
-    r_exponentialFlux:
+    HSC-I_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_FluxErr
+            - HSC-I
+        dataset: Exp_multiprofit
+    HSC-R_exponentialFlux:
         functor: MultibandSinglePrecisionFloatColumn
         args:
             - HSC-R_Flux
             - HSC-R
         dataset: Exp_multiprofit
-    y_exponentialFlux:
+    HSC-R_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-R_FluxErr
+            - HSC-R
+        dataset: Exp_multiprofit
+    HSC-Z_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_Flux
+            - HSC-Z
+        dataset: Exp_multiprofit
+    HSC-Z_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_FluxErr
+            - HSC-Z
+        dataset: Exp_multiprofit
+    HSC-Y_exponentialFlux:
         functor: MultibandSinglePrecisionFloatColumn
         args:
             - HSC-Y_Flux
             - HSC-Y
         dataset: Exp_multiprofit
-    z_exponentialFlux:
+    HSC-Y_exponentialFluxErr:
         functor: MultibandSinglePrecisionFloatColumn
         args:
-            - HSC-Z_Flux
-            - HSC-Z
+            - HSC-Y_FluxErr
+            - HSC-Y
+        dataset: Exp_multiprofit
+    HSC-G_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_Flux
+            - HSC-G
+        dataset: Exp_multiprofit
+    HSC-G_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_FluxErr
+            - HSC-G
+        dataset: Exp_multiprofit
+    VIRCAM-Y_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Y_Flux
+            - VIRCAM-Y
+        dataset: Exp_multiprofit
+    VIRCAM-Y_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Y_FluxErr
+            - VIRCAM-Y
+        dataset: Exp_multiprofit
+    VIRCAM-J_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-J_Flux
+            - VIRCAM-J
+        dataset: Exp_multiprofit
+    VIRCAM-J_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-J_FluxErr
+            - VIRCAM-J
+        dataset: Exp_multiprofit
+    WFCAM-J_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-J_Flux
+            - WFCAM-J
+        dataset: Exp_multiprofit
+    WFCAM-J_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-J_FluxErr
+            - WFCAM-J
+        dataset: Exp_multiprofit
+    VIRCAM-H_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-H_Flux
+            - VIRCAM-H
+        dataset: Exp_multiprofit
+    VIRCAM-H_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-H_FluxErr
+            - VIRCAM-H
+        dataset: Exp_multiprofit
+    WFCAM-H_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-H_Flux
+            - WFCAM-H
+        dataset: Exp_multiprofit
+    WFCAM-H_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-H_FluxErr
+            - WFCAM-H
+        dataset: Exp_multiprofit
+    VIRCAM-Ks_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Ks_Flux
+            - VIRCAM-Ks
+        dataset: Exp_multiprofit
+    VIRCAM-Ks_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Ks_FluxErr
+            - VIRCAM-Ks
+        dataset: Exp_multiprofit
+    WFCAM-K_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-K_Flux
+            - WFCAM-K
+        dataset: Exp_multiprofit
+    WFCAM-K_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-K_FluxErr
+            - WFCAM-K
+        dataset: Exp_multiprofit
+    MegaCam-uS_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-uS_Flux
+            - MegaCam-uS
+        dataset: Exp_multiprofit
+    MegaCam-uS_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-uS_FluxErr
+            - MegaCam-uS
+        dataset: Exp_multiprofit
+    MegaCam-u_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-u_Flux
+            - MegaCam-u
+        dataset: Exp_multiprofit
+    MegaCam-u_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-u_FluxErr
+            - MegaCam-u
+        dataset: Exp_multiprofit
+    HSC-NB0816_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0816_Flux
+            - HSC-NB0816
+        dataset: Exp_multiprofit
+    HSC-NB0816_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0816_FluxErr
+            - HSC-NB0816
+        dataset: Exp_multiprofit
+    HSC-NB0718_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0718_Flux
+            - HSC-NB0718
+        dataset: Exp_multiprofit
+    HSC-NB0718_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0718_FluxErr
+            - HSC-NB0718
+        dataset: Exp_multiprofit
+    HSC-NB0527_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0527_Flux
+            - HSC-NB0527
+        dataset: Exp_multiprofit
+    HSC-NB0527_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0527_FluxErr
+            - HSC-NB0527
+        dataset: Exp_multiprofit
+    HSC-NB0921_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0921_Flux
+            - HSC-NB0921
+        dataset: Exp_multiprofit
+    HSC-NB0921_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0921_FluxErr
+            - HSC-NB0921
+        dataset: Exp_multiprofit
+    HSC-NB0973_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0973_Flux
+            - HSC-NB0973
+        dataset: Exp_multiprofit
+    HSC-NB0973_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0973_FluxErr
+            - HSC-NB0973
+        dataset: Exp_multiprofit
+    HSC-NB0387_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0387_Flux
+            - HSC-NB0387
+        dataset: Exp_multiprofit
+    HSC-NB0387_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0387_FluxErr
+            - HSC-NB0387
+        dataset: Exp_multiprofit
+    HSC-NB1010_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB1010_Flux
+            - HSC-NB1010
+        dataset: Exp_multiprofit
+    HSC-NB1010_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB1010_FluxErr
+            - HSC-NB1010
+        dataset: Exp_multiprofit
+    VIRCAM-NB118_exponentialFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-NB118_Flux
+            - VIRCAM-NB118
+        dataset: Exp_multiprofit
+    VIRCAM-NB118_exponentialFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-NB118_FluxErr
+            - VIRCAM-NB118
         dataset: Exp_multiprofit
     exponential_raErr:
         functor: SinglePrecisionFloatColumn
@@ -856,36 +1090,6 @@ funcs:
     exponential_rhoErr:
         functor: SinglePrecisionFloatColumn
         args: rhoErr
-        dataset: Exp_multiprofit
-    g_exponentialFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-G_FluxErr
-            - HSC-G
-        dataset: Exp_multiprofit
-    i_exponentialFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-I_FluxErr
-            - HSC-I
-        dataset: Exp_multiprofit
-    r_exponentialFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-R_FluxErr
-            - HSC-R
-        dataset: Exp_multiprofit
-    y_exponentialFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-Y_FluxErr
-            - HSC-Y
-        dataset: Exp_multiprofit
-    z_exponentialFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-Z_FluxErr
-            - HSC-Z
         dataset: Exp_multiprofit
     exponential_n_eval_jac:
         functor: Column
@@ -973,16 +1177,16 @@ funcs:
             - base_LocalWcs_CDMatrix_1_2
             - base_LocalWcs_CDMatrix_2_1
             - base_LocalWcs_CDMatrix_2_2
-    HSC-G_sersicFlux:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-G_Flux
-            - HSC-G
-        dataset: Sersic_multiprofit
     HSC-I_sersicFlux:
         functor: MultibandSinglePrecisionFloatColumn
         args:
             - HSC-I_Flux
+            - HSC-I
+        dataset: Sersic_multiprofit
+    HSC-I_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-I_FluxErr
             - HSC-I
         dataset: Sersic_multiprofit
     HSC-R_sersicFlux:
@@ -991,17 +1195,251 @@ funcs:
             - HSC-R_Flux
             - HSC-R
         dataset: Sersic_multiprofit
-    HSC-Y_sersicFlux:
+    HSC-R_sersicFluxErr:
         functor: MultibandSinglePrecisionFloatColumn
         args:
-            - HSC-Y_Flux
-            - HSC-Y
+            - HSC-R_FluxErr
+            - HSC-R
         dataset: Sersic_multiprofit
     HSC-Z_sersicFlux:
         functor: MultibandSinglePrecisionFloatColumn
         args:
             - HSC-Z_Flux
             - HSC-Z
+        dataset: Sersic_multiprofit
+    HSC-Z_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Z_FluxErr
+            - HSC-Z
+        dataset: Sersic_multiprofit
+    HSC-Y_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_Flux
+            - HSC-Y
+        dataset: Sersic_multiprofit
+    HSC-Y_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-Y_FluxErr
+            - HSC-Y
+        dataset: Sersic_multiprofit
+    HSC-G_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_Flux
+            - HSC-G
+        dataset: Sersic_multiprofit
+    HSC-G_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-G_FluxErr
+            - HSC-G
+        dataset: Sersic_multiprofit
+    VIRCAM-Y_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Y_Flux
+            - VIRCAM-Y
+        dataset: Sersic_multiprofit
+    VIRCAM-Y_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Y_FluxErr
+            - VIRCAM-Y
+        dataset: Sersic_multiprofit
+    VIRCAM-J_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-J_Flux
+            - VIRCAM-J
+        dataset: Sersic_multiprofit
+    VIRCAM-J_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-J_FluxErr
+            - VIRCAM-J
+        dataset: Sersic_multiprofit
+    WFCAM-J_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-J_Flux
+            - WFCAM-J
+        dataset: Sersic_multiprofit
+    WFCAM-J_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-J_FluxErr
+            - WFCAM-J
+        dataset: Sersic_multiprofit
+    VIRCAM-H_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-H_Flux
+            - VIRCAM-H
+        dataset: Sersic_multiprofit
+    VIRCAM-H_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-H_FluxErr
+            - VIRCAM-H
+        dataset: Sersic_multiprofit
+    WFCAM-H_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-H_Flux
+            - WFCAM-H
+        dataset: Sersic_multiprofit
+    WFCAM-H_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-H_FluxErr
+            - WFCAM-H
+        dataset: Sersic_multiprofit
+    VIRCAM-Ks_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Ks_Flux
+            - VIRCAM-Ks
+        dataset: Sersic_multiprofit
+    VIRCAM-Ks_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-Ks_FluxErr
+            - VIRCAM-Ks
+        dataset: Sersic_multiprofit
+    WFCAM-K_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-K_Flux
+            - WFCAM-K
+        dataset: Sersic_multiprofit
+    WFCAM-K_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - WFCAM-K_FluxErr
+            - WFCAM-K
+        dataset: Sersic_multiprofit
+    MegaCam-uS_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-uS_Flux
+            - MegaCam-uS
+        dataset: Sersic_multiprofit
+    MegaCam-uS_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-uS_FluxErr
+            - MegaCam-uS
+        dataset: Sersic_multiprofit
+    MegaCam-u_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-u_Flux
+            - MegaCam-u
+        dataset: Sersic_multiprofit
+    MegaCam-u_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - MegaCam-u_FluxErr
+            - MegaCam-u
+        dataset: Sersic_multiprofit
+    HSC-NB0816_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0816_Flux
+            - HSC-NB0816
+        dataset: Sersic_multiprofit
+    HSC-NB0816_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0816_FluxErr
+            - HSC-NB0816
+        dataset: Sersic_multiprofit
+    HSC-NB0718_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0718_Flux
+            - HSC-NB0718
+        dataset: Sersic_multiprofit
+    HSC-NB0718_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0718_FluxErr
+            - HSC-NB0718
+        dataset: Sersic_multiprofit
+    HSC-NB0527_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0527_Flux
+            - HSC-NB0527
+        dataset: Sersic_multiprofit
+    HSC-NB0527_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0527_FluxErr
+            - HSC-NB0527
+        dataset: Sersic_multiprofit
+    HSC-NB0921_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0921_Flux
+            - HSC-NB0921
+        dataset: Sersic_multiprofit
+    HSC-NB0921_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0921_FluxErr
+            - HSC-NB0921
+        dataset: Sersic_multiprofit
+    HSC-NB0973_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0973_Flux
+            - HSC-NB0973
+        dataset: Sersic_multiprofit
+    HSC-NB0973_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0973_FluxErr
+            - HSC-NB0973
+        dataset: Sersic_multiprofit
+    HSC-NB0387_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0387_Flux
+            - HSC-NB0387
+        dataset: Sersic_multiprofit
+    HSC-NB0387_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB0387_FluxErr
+            - HSC-NB0387
+        dataset: Sersic_multiprofit
+    HSC-NB1010_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB1010_Flux
+            - HSC-NB1010
+        dataset: Sersic_multiprofit
+    HSC-NB1010_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - HSC-NB1010_FluxErr
+            - HSC-NB1010
+        dataset: Sersic_multiprofit
+    VIRCAM-NB118_sersicFlux:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-NB118_Flux
+            - VIRCAM-NB118
+        dataset: Sersic_multiprofit
+    VIRCAM-NB118_sersicFluxErr:
+        functor: MultibandSinglePrecisionFloatColumn
+        args:
+            - VIRCAM-NB118_FluxErr
+            - VIRCAM-NB118
         dataset: Sersic_multiprofit
     sersic_index:
         functor: SinglePrecisionFloatColumn
@@ -1026,36 +1464,6 @@ funcs:
     sersic_rhoErr:
         functor: SinglePrecisionFloatColumn
         args: rhoErr
-        dataset: Sersic_multiprofit
-    HSC-G_sersicFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-G_FluxErr
-            - HSC-G
-        dataset: Sersic_multiprofit
-    HSC-I_sersicFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-I_FluxErr
-            - HSC-I
-        dataset: Sersic_multiprofit
-    HSC-R_sersicFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-R_FluxErr
-            - HSC-R
-        dataset: Sersic_multiprofit
-    HSC-Y_sersicFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-Y_FluxErr
-            - HSC-Y
-        dataset: Sersic_multiprofit
-    HSC-Z_sersicFluxErr:
-        functor: MultibandSinglePrecisionFloatColumn
-        args:
-            - HSC-Z_FluxErr
-            - HSC-Z
         dataset: Sersic_multiprofit
     sersic_indexErr:
         functor: SinglePrecisionFloatColumn

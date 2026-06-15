@@ -40,6 +40,102 @@ tasks:
   transformObjectTable: u2k.transformObjects.NoEpochTransformObjectCatalogTask
   consolidateObjectTable: u2k.transformObjects.ConsolidateObjectTableTask
 
+  analyzeObjectTableCore:
+    class: u2k.analysis.ObjectTableTractAnalysisTask
+    config:
+      connections.outputName: objectTableCore
+      # The stellarLocus actions ([wxy]Perp{PSF,CModel}) are activated in config/objectTableTractAnalysis.py
+      atools.shapeSizeFractionalDiff: ShapeSizeFractionalDiffScatter  #  shapes.py
+      atools.e1Diff: E1DiffScatter  #  shapes.py
+      atools.e2Diff: E2DiffScatter  #  shapes.py
+      atools.skyFluxStatisticMetric: SkyFluxStatisticMetric
+      atools.skyFluxStatisticMetric.applyContext: CoaddContext
+      atools.skyObjectSky: SkyObjectSkyPlot
+      atools.skyObjectFlux: SkyObjectHistPlot
+      atools.psfCModelScatter: PsfCModelScatterPlot  # photometry.py
+      atools.shapeSizeDetRadiusVsCmodelMag: SizeMagnitudePlot
+      atools.shapeSizeDetRadiusVsCmodelMag.size_type: "determinantRadius"
+      atools.shapeSizeDetRadiusVsCmodelMag.mag_x: "cmodel_err"
+      atools.shapeSizeDetRadiusVsCmodelMag.size_y: "shape_slot"
+      atools.shapeSizeDetRadiusVsCmodelMag.produce.plot.xLims: (17, 29)
+      atools.shapeSizeDetRadiusVsCmodelMag.produce.plot.yLims: (-3, 2)
+      atools.shapeSizeDetRadiusVsCmodelMag.applyContext: CoaddContext
+      atools.shapeSizeDetRadiusVsPsfMag: SizeMagnitudePlot
+      atools.shapeSizeDetRadiusVsPsfMag.size_type: "determinantRadius"
+      atools.shapeSizeDetRadiusVsPsfMag.mag_x: "psf_err"
+      atools.shapeSizeDetRadiusVsPsfMag.size_y: "shape_slot"
+      atools.shapeSizeDetRadiusVsPsfMag.applyContext: CoaddContext
+      atools.cModelBulgeSizeVsCmodelBulgeMag: SizeMagnitudePlot
+      atools.cModelBulgeSizeVsCmodelBulgeMag.size_type: "singleColumnSize"
+      atools.cModelBulgeSizeVsCmodelBulgeMag.mag_x: "bulge_err"
+      atools.cModelBulgeSizeVsCmodelBulgeMag.size_y: "bulge"
+      atools.cModelBulgeSizeVsCmodelBulgeMag.produce.plot.xLims: (17, 29)
+      atools.cModelBulgeSizeVsCmodelBulgeMag.produce.plot.yLims: (-3, 2)
+      atools.cModelBulgeSizeVsCmodelBulgeMag.applyContext: CoaddContext
+      atools.cModelDiskSizeVsCmodelDiskMag: SizeMagnitudePlot
+      atools.cModelDiskSizeVsCmodelDiskMag.size_type: "singleColumnSize"
+      atools.cModelDiskSizeVsCmodelDiskMag.mag_x: "disk_err"
+      atools.cModelDiskSizeVsCmodelDiskMag.size_y: "disk"
+      atools.cModelDiskSizeVsCmodelDiskMag.produce.plot.xLims: (17, 29)
+      atools.cModelDiskSizeVsCmodelDiskMag.produce.plot.yLims: (-3, 2)
+      atools.cModelDiskSizeVsCmodelDiskMag.applyContext: CoaddContext
+      atools.exponentialSizeVsExponentialMag: SizeMagnitudePlot
+      atools.exponentialSizeVsExponentialMag.is_covariance: false
+      atools.exponentialSizeVsExponentialMag.mag_x: "exponential_err"
+      atools.exponentialSizeVsExponentialMag.size_type: "singleColumnSize"
+      atools.exponentialSizeVsExponentialMag.size_y: "exponential"
+      atools.exponentialSizeVsExponentialMag.produce.plot.xLims: (17, 29)
+      atools.exponentialSizeVsExponentialMag.produce.plot.yLims: (-3, 2)
+      atools.exponentialSizeVsExponentialMag.applyContext: CoaddContext
+      atools.exponentialSizeVsSersicMag: SizeMagnitudePlot
+      atools.exponentialSizeVsSersicMag.is_covariance: false
+      atools.exponentialSizeVsSersicMag.mag_x: "sersic_err"
+      atools.exponentialSizeVsSersicMag.size_type: "singleColumnSize"
+      atools.exponentialSizeVsSersicMag.size_y: "exponential"
+      atools.exponentialSizeVsSersicMag.produce.plot.xLims: (17, 29)
+      atools.exponentialSizeVsSersicMag.produce.plot.yLims: (-3, 2)
+      atools.exponentialSizeVsSersicMag.applyContext: CoaddContext
+      atools.exponentialEllipticityVsExponentialMag: ExponentialEllipticityMagnitudePlot
+      atools.exponentialEllipticityVsExponentialMag.mag_x: "exponential_err"
+      atools.exponentialEllipticityVsExponentialMag.produce.plot.xLims: (17, 29)
+      atools.exponentialEllipticityVsExponentialMag.selector_galaxy.vectorKey: "HSC-I_extendedness"
+      atools.exponentialEllipticityVsExponentialMag.selector_galaxy.extendedness_minimum: 0.3
+      atools.exponentialEllipticityVsExponentialMag.selector_star.vectorKey: "HSC-I_extendedness"
+      atools.exponentialEllipticityVsExponentialMag.selector_star.extendedness_maximum: 0.3
+      atools.exponentialEllipticityVsExponentialMag.applyContext: CoaddContext
+      atools.sersicSizeVsSersicMag: SizeMagnitudePlot
+      atools.sersicSizeVsSersicMag.is_covariance: false
+      atools.sersicSizeVsSersicMag.mag_x: "sersic_err"
+      atools.sersicSizeVsSersicMag.size_type: "singleColumnSize"
+      atools.sersicSizeVsSersicMag.size_y: "sersic"
+      atools.sersicSizeVsSersicMag.produce.plot.xLims: (17, 29)
+      atools.sersicSizeVsSersicMag.produce.plot.yLims: (-3, 2)
+      atools.sersicSizeVsSersicMag.applyContext: CoaddContext
+      atools.sersicEllipticityVsSersicMag: SersicEllipticityMagnitudePlot
+      atools.sersicEllipticityVsSersicMag.mag_x: "sersic_err"
+      atools.sersicEllipticityVsSersicMag.produce.plot.xLims: (17, 29)
+      atools.sersicEllipticityVsSersicMag.selector_galaxy.vectorKey: "HSC-I_extendedness"
+      atools.sersicEllipticityVsSersicMag.selector_galaxy.extendedness_minimum: 0.3
+      atools.sersicEllipticityVsSersicMag.selector_star.vectorKey: "HSC-I_extendedness"
+      atools.sersicEllipticityVsSersicMag.selector_star.extendedness_maximum: 0.3
+      atools.sersicEllipticityVsSersicMag.applyContext: CoaddContext
+      atools.sersicIndexVsSersicMag: SingleColumnMagnitudeScatterPlot
+      atools.sersicIndexVsSersicMag.mag_x: "sersic_err"
+      atools.sersicIndexVsSersicMag.key_y: "sersic_index"
+      atools.sersicIndexVsSersicMag.produce.plot.yAxisLabel: "Sérsic index"
+      atools.sersicIndexVsSersicMag.produce.plot.xLims: (17, 29)
+      atools.sersicIndexVsSersicMag.produce.plot.yLims: (0.4, 6.1)
+      atools.sersicIndexVsSersicMag.produce.plot.legendLocation: "upper right"
+      atools.sersicIndexVsSersicMag.applyContext: CoaddContext
+      atools.coaddInputCount: CoaddInputCount
+      atools.coaddPatchCount: CountPatches  #  counts.py
+      python: |
+        from lsst.analysis.tools.atools import *
+        from lsst.analysis.tools.contexts import *
+        from u2k.instrument import FILTER_PRIORITY
+        config.bands = FILTER_PRIORITY
+
+
 subsets:
   pixels:
     subset:
@@ -69,3 +165,9 @@ subsets:
     description: >
       A set of tasks to transform multiband catalogs into a parquet object
       table.
+
+  analyze:
+    subset:
+      - analyzeObjectTableCore
+    description:
+      Analysis of the object catalogs.
