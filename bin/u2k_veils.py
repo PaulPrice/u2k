@@ -29,6 +29,11 @@ def main():
     parser.add_argument("--warpConfig", help="Path to a config file for the warping.")
     parser.add_argument("--calibrateConfig", help="Path to a config file for the calibration.")
     parser.add_argument(
+        "--oldCollection",
+        default="coadds",
+        help="Collection to look in for existing coadds to combine with.",
+    )
+    parser.add_argument(
         "--workers",
         "-j",
         type=int,

@@ -18,6 +18,7 @@ from lsst.skymap import PatchInfo
 
 from .butler import registerDatasetType
 from .calibrateImage import CoaddCalibrateImageTask
+from .detector import makeDetector
 from .logging import getLogger
 from .math import renormalizeVariance
 from .processPool import ProcessPool
@@ -62,6 +63,7 @@ def readVeilsConf(filename: str) -> list[ImageF]:
 def warpVeilsPatch(
     log: Logger,
     butler: Butler,
+    oldCollection: str,
     datasetType: str,
     dataId: dict[str, str|int],
     exposureList: list[ExposureF],
@@ -77,6 +79,8 @@ def warpVeilsPatch(
         Logger to use for logging messages.
     butler : `lsst.daf.butler.Butler`
         The butler to use.
+    oldCollection : `str`
+        The collection with old data to check for existing output in.
     datasetType : `str`
         The dataset type name for the warped image.
     dataId : `dict`
@@ -125,6 +129,21 @@ def warpVeilsPatch(
         totalGood += numGood
         inputRecorder.addCalExp(exposure, 0, numGood)
 
+    # Combine with the u2k v2 coadd if it exists.
+    dataRef = butler.find_dataset(datasetType, dataId, collections=oldCollection)
+    if dataRef:
+        old = butler.get(dataRef)
+        assert old.getDimensions() == image.getDimensions()
+        old.maskedImage = old.getPhotoCalib().calibrateImage(old.maskedImage)
+        old.setDetector(makeDetector())
+        old.setFilter(exposureList[0].getFilter())
+        good = np.isfinite(old.image.array) & (old.variance.array > 0)
+        weight = 1.0/old.variance.array[good]
+        image.array[good] += old.image.array[good]*weight
+        sumWeight[good] += weight
+        numGood = np.sum(good)
+        inputRecorder.addCalExp(old, 0, numGood)
+
     good = np.isfinite(sumWeight) & (sumWeight > 0)
     log.info("Patch %s has %d good pixels", dataId, np.sum(good))
     image.array[good] /= sumWeight[good]
@@ -148,6 +167,7 @@ def warpVeilsPatch(
     ))
 
     coadd.setWcs(patchInfo.getWcs())
+    coadd.setFilter(exposureList[0].getFilter())
 
     butler.put(coadd, datasetType, dataId=dataId)
 
@@ -201,6 +221,7 @@ def warpVeils(
     *,
     skymapName: str = "hsc",
     datasetType: str = "deepCoadd",
+    oldCollection: str = "coadds",
     sample: float = 500,
     warpConfig: Warper.ConfigClass = Warper.ConfigClass(),
     calibrateConfig: CoaddCalibrateImageTask.ConfigClass = CoaddCalibrateImageTask.ConfigClass(),
@@ -222,6 +243,8 @@ def warpVeils(
         The band name for the image.
     skymapName : `str`, optional
         The skymap name defining the output WCSes.
+    oldCollection : `str`, optional
+        The collection with old data to check for existing output in.
     datasetType : `str`, optional
         The dataset type name for the warped image.    
     sample : `float`, optional
@@ -286,6 +309,7 @@ def warpVeils(
                 warpVeilsPatch,
                 log,
                 butler,
+                oldCollection,
                 datasetType,
                 dataId,
                 [calibrated[ii] for ii in indices],
