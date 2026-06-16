@@ -15,6 +15,15 @@ class MapCallable:
             raise RuntimeError(f"Error in map job with index {index}") from exc
 
 
+class ResultsWrapper:
+    """A wrapper around job results that looks like a future."""
+    def __init__(self, results):
+        self._results = results
+
+    def result(self):
+        return self._results
+
+
 class ProcessPool:
     """A convenience wrapper around `concurrent.futures.ProcessPoolExecutor`
     
@@ -30,11 +39,19 @@ class ProcessPool:
         self.executor = ProcessPoolExecutor(workers)
         self.jobs = []
         self.results = []
+        self.enabled = True
 
     def clear(self):
         """Clear the list of jobs and results."""
         self.jobs = []
         self.results = []
+
+    def disable(self):
+        """Disable the process pool, causing all jobs to run in the main process
+        
+        This is useful for debugging.
+        """
+        self.enabled = False
 
     def submit(self, func, *args, **kwargs):
         """Submit a job to the process pool.
@@ -55,7 +72,10 @@ class ProcessPool:
         job : `concurrent.futures.Future`
             A future representing the execution of the job.
         """
-        job = self.executor.submit(func, *args, **kwargs)
+        if self.enabled:
+            job = self.executor.submit(func, *args, **kwargs)
+        else:
+            job = ResultsWrapper(func(*args, **kwargs))
         self.jobs.append(job)
         return job
 
