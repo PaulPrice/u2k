@@ -31,13 +31,16 @@ def robustRms(array: ArrayLike, nanSafe=False) -> float:
     return 0.741 * (uq - lq)
 
 
-def renormalizeVariance(maskedImage: MaskedImage) -> float:
+def renormalizeVariance(maskedImage: MaskedImage, apply: bool = True) -> float:
     """Renormalize the variance plane so that the image RMS matches expectation
 
     Parameters
     ----------
     maskedImage : `lsst.afw.image.MaskedImage`
         The masked image for which to renormalize the variance.
+    apply : `bool`, optional
+        Apply the renormalization to the variance plane. If `False`, just
+        calculate the normalization factor.
 
     Returns
     -------
@@ -54,5 +57,8 @@ def renormalizeVariance(maskedImage: MaskedImage) -> float:
     with np.errstate(divide="ignore", invalid="ignore"):
         sigNoise = (maskedImage.image.array - median)/np.sqrt(maskedImage.variance.array)
     rms = robustRms(sigNoise[good])
-    maskedImage.variance.array *= rms**2
+    if not np.isfinite(rms) or rms <= 0:
+        raise RuntimeError(f"Calculated non-positive or non-finite RMS: {rms}")
+    if apply:
+        maskedImage.variance.array *= rms**2
     return rms
