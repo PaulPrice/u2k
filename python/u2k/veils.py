@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from logging import Logger
 
 import numpy as np
@@ -11,7 +10,6 @@ from lsst.afw.fits import readMetadata
 from lsst.afw.math import Warper
 from lsst.afw.geom import SkyWcs
 from lsst.daf.butler import Butler
-from lsst.geom import Point2D
 from lsst.meas.algorithms import CoaddPsf, CoaddPsfConfig
 from lsst.pipe.tasks.coaddInputRecorder import CoaddInputRecorderTask
 from lsst.skymap import PatchInfo
@@ -22,6 +20,7 @@ from .detector import makeDetector
 from .logging import getLogger
 from .math import renormalizeVariance
 from .processPool import ProcessPool
+from .warp import getWarpMapping, warpExposures
 
 
 def readVeils(filename: str) -> ExposureF:
@@ -104,72 +103,18 @@ def warpVeilsPatch(
             return
 
     log.info("Warping %d exposures into patch %s", len(exposureList), dataId)
+    warped = warpExposures(
+        log=log,
+        exposureList=exposureList,
+        patchInfo=patchInfo,
+        warpConfig=warpConfig,
+        butler=butler,
+        datasetType=datasetType,
+        dataId=dataId,
+        oldCollection=oldCollection
+    )
 
-    task = CoaddInputRecorderTask(log=log, name="inputRecorder")
-    inputRecorder = task.makeCoaddTempExpRecorder(0, len(exposureList))
-
-    warper = Warper.fromConfig(warpConfig)
-    image = ImageF(patchInfo.getOuterBBox())
-    image[:] = 0.0
-    sumWeight = np.zeros_like(image.array)
-    totalGood = 0
-    for exposure in exposureList:
-        warped = warper.warpExposure(
-            patchInfo.getWcs(),
-            exposure,
-            exposure.getWcs(),
-            maxBBox=patchInfo.getOuterBBox(),
-            destBBox=patchInfo.getOuterBBox(),
-        )
-        good = np.isfinite(warped.image.array) & (warped.variance.array > 0)
-        weight = 1.0/warped.variance.array[good]
-        image.array[good] += warped.image.array[good]*weight
-        sumWeight[good] += weight
-        numGood = np.sum(good)
-        totalGood += numGood
-        inputRecorder.addCalExp(exposure, 0, numGood)
-
-    # Combine with the u2k v2 coadd if it exists.
-    dataRef = butler.find_dataset(datasetType, dataId, collections=oldCollection)
-    if dataRef:
-        old = butler.get(dataRef)
-        assert old.getDimensions() == image.getDimensions()
-        old.maskedImage = old.getPhotoCalib().calibrateImage(old.maskedImage)
-        old.setDetector(makeDetector())
-        old.setFilter(exposureList[0].getFilter())
-        good = np.isfinite(old.image.array) & (old.variance.array > 0)
-        weight = 1.0/old.variance.array[good]
-        image.array[good] += old.image.array[good]*weight
-        sumWeight[good] += weight
-        numGood = np.sum(good)
-        inputRecorder.addCalExp(old, 0, numGood)
-
-    good = np.isfinite(sumWeight) & (sumWeight > 0)
-    log.info("Patch %s has %d good pixels", dataId, np.sum(good))
-    image.array[good] /= sumWeight[good]
-    coadd = makeExposure(makeMaskedImage(image))
-
-    coadd.mask.array[~good] |= coadd.mask.getPlaneBitMask("NO_DATA")
-    coadd.variance.array[good] = 1.0/sumWeight[good]
-    coadd.variance.array[~good] = np.nan
-    renormalizeVariance(coadd.maskedImage)
-
-    # Set the photometric calibration
-    coadd.setPhotoCalib(PhotoCalib(1.0))
-    coadd.metadata["BUNIT"] = "nJy"
-
-    # Set the PSF and aperture corrections
-    inputRecorder.finish(coadd, totalGood)
-    coadd.setPsf(CoaddPsf(
-        inputRecorder.coaddInputs.ccds,
-        patchInfo.getWcs(),
-        CoaddPsfConfig().makeControl(),
-    ))
-
-    coadd.setWcs(patchInfo.getWcs())
-    coadd.setFilter(exposureList[0].getFilter())
-
-    butler.put(coadd, datasetType, dataId=dataId)
+    butler.put(warped, datasetType, dataId=dataId)
 
 
 def calibrateVeils(
@@ -267,28 +212,13 @@ def warpVeils(
     for exposure in exposureList:
         exposure.setFilter(FilterLabel.fromBandPhysical(band, band))
 
-    exposureToPatches = [set() for _ in exposureList]
-    for ii, exposure in enumerate(exposureList):
-        wcs = exposure.getWcs()
-        width, height = exposure.getDimensions()
-        xNumSamples = int(width / sample)
-        yNumSamples = int(height / sample)
-        xSample = np.linspace(0, width - 1, xNumSamples)
-        ySample = np.linspace(0, height - 1, yNumSamples)
-        coordList = [wcs.pixelToSky(Point2D(x, y)) for y in ySample for x in xSample]
-        for tract, patches in skymap.findTractPatchList(coordList):
-            for pp in patches:
-                exposureToPatches[ii].add((tract.tract_id, pp.sequential_index))
-
-    allPatches = set()
-    for ii, patches in enumerate(exposureToPatches):
-        allPatches.update(patches)
-    log.info("Found %d patches across %d exposures", len(allPatches), len(exposureList))
-
-    patchToIndices = defaultdict(list)
-    for ii, patches in enumerate(exposureToPatches):
-        for patch in patches:
-            patchToIndices[patch].append(ii)
+    patchToIndices = getWarpMapping(
+        [exposure.getWcs() for exposure in exposureList],
+        [exposure.getDimensions() for exposure in exposureList],
+        skymap,
+        sample=sample,
+        log=log,
+    )
 
     pool = ProcessPool(workers)
     calibrated = pool.map(

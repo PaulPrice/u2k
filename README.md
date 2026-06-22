@@ -80,25 +80,9 @@ The main data products are:
 
 ASIAA have provided coadded images from CFHT-WIRCAM and UKIRT-WFCAM,
 along with exposure time maps.
+Ingest these into the butler with:
 
-    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_DEEP23-K-combine.fits time.WF_DEEP23-K-combine.fits -j 10 > $REPO/ingest/WF_DEEP23-K.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-NE-H-combine.fits time.WF_ECOSMOS-NE-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NE-H.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-NE-K-combine.fits time.WF_ECOSMOS-NE-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NE-K.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-NW-H-combine.fits time.WF_ECOSMOS-NW-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-H.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-NW-J-combine.fits time.WF_ECOSMOS-NW-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-NW-K-combine.fits time.WF_ECOSMOS-NW-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-NW-K.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-SE-H-combine.fits time.WF_ECOSMOS-SE-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-H.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-SE-J-combine.fits time.WF_ECOSMOS-SE-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-SE-K-combine.fits time.WF_ECOSMOS-SE-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SE-K.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-H map.WF_ECOSMOS-SW-H-combine.fits time.WF_ECOSMOS-SW-H-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-H.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-J map.WF_ECOSMOS-SW-J-combine.fits time.WF_ECOSMOS-SW-J-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-K map.WF_ECOSMOS-SW-K-combine.fits time.WF_ECOSMOS-SW-K-combine.fits -j 10 > $REPO/ingest/WF_ECOSMOS-SW-K.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-WIRCAM-J map.WF+WI_COSMOS-J.fits time.WF+WI_COSMOS-J.fits -j 10 > $REPO/ingest/WF+WI_COSMOS-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WFCAM-WIRCAM-J map.WF+WI_DEEP23-J.fits time.WF+WI_DEEP23-J.fits -j 10 > $REPO/ingest/WF+WI_DEEP23-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_COSMOS_a-J.fits time.WI_COSMOS_a-J.fits -j 10 > $REPO/ingest/WI_COSMOS_a-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_COSMOS_d-J.fits time.WI_COSMOS_d-J.fits -j 10 > $REPO/ingest/WI_COSMOS_d-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_N-J.fits time.WI_XMMLSS_N-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_N-J.log 2>&1
-    u2k_asiaa.py $REPO asiaa WIRCAM-J map.WI_XMMLSS_S-J.fits time.WI_XMMLSS_S-J.fits -j 10 > $REPO/ingest/WI_XMMLSS_S-J.log 2>&1
+    u2k_asiaa.py $REPO asiaa /path/to/asiaa_data -j 50
 
 ### VISTA VEILS
 
@@ -108,6 +92,6 @@ The ESO data is delivered with munged filenames, and need to get renamed:
 
 Then ingest:
 
-    u2k_veils.py $REPO veils . -j 10
+    u2k_veils.py $REPO veils . -j 20
 
 (The code iterates over the bands, using hardwired globs.)
