@@ -54,6 +54,7 @@ site:
     nodes: 1
     cores_per_node: 112
     walltime: "24:00:00"
+    singleton: False
     max_blocks: 2
     mem_per_node: 980
     account: rubin
@@ -62,6 +63,7 @@ site:
     nodes: 1
     cores_per_node: 112
     walltime: "24:00:00"
+    singleton: False
     max_blocks: 4
     mem_per_node: 980
     account: rubin
@@ -69,7 +71,26 @@ site:
     class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
     nodes: 1
     cores_per_node: 112
+    singleton: False
     walltime: "24:00:00"
     max_blocks: 8
+    mem_per_node: 980
+    account: rubin
+  tiger_1n_112c_48h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 112
+    singleton: True
+    walltime: "48:00:00"
+    max_blocks: 2
+    mem_per_node: 980
+    account: rubin
+  tiger_1n4_112c_48h:
+    class: lsst.ctrl.bps.parsl.sites.princeton.Tiger
+    nodes: 1
+    cores_per_node: 112
+    singleton: False
+    walltime: "48:00:00"
+    max_blocks: 4
     mem_per_node: 980
     account: rubin
