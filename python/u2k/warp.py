@@ -4,7 +4,7 @@ from logging import Logger
 import numpy as np
 
 from lsst.afw.geom import SkyWcs
-from lsst.afw.image import ExposureF, ImageF, PhotoCalib, makeExposure, makeMaskedImage
+from lsst.afw.image import ExposureF, ImageF, PhotoCalib, makeExposure, makeMaskedImage, FilterLabel
 from lsst.afw.math import Warper
 from lsst.daf.butler import Butler
 from lsst.geom import Point2D
@@ -182,6 +182,6 @@ def warpExposures(
     ))
 
     coadd.setWcs(patchInfo.getWcs())
-    coadd.setFilter(exposureList[0].getFilter())
+    coadd.setFilter(FilterLabel.fromBand(exposureList[0].getFilter().bandLabel))
 
     return coadd
