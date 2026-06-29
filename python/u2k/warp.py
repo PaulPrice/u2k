@@ -163,9 +163,10 @@ def warpExposures(
     sumImage.array[good] /= sumWeight[good]
     coadd = makeExposure(makeMaskedImage(sumImage))
 
+    coadd.image.array[~good] = 0.0
     coadd.mask.array[~good] |= coadd.mask.getPlaneBitMask("NO_DATA")
     coadd.variance.array[good] = 1.0/sumWeight[good]
-    coadd.variance.array[~good] = np.nan
+    coadd.variance.array[~good] = 0.0
     renormalizeVariance(coadd.maskedImage)
 
     # Set the photometric calibration
