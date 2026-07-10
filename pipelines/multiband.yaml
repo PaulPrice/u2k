@@ -22,11 +22,9 @@ tasks:
     class: lsst.pipe.tasks.deblendCoaddSourcesPipeline.DeblendCoaddSourcesMultiTask
     config:
       useCellCoadds: false
-      # Disable deblending limits on large sources
-      multibandDeblend.maxNumberOfPeaks: -1
-      multibandDeblend.maxFootprintArea: -1
-      multibandDeblend.maxAreaTimesPeaks: -1
-      multibandDeblend.maxFootprintSize: -1
+      python: |
+        from u2k.deblend import PiecewiseScarletDeblendTask
+        config.multibandDeblend.retarget(PiecewiseScarletDeblendTask)
   measure:
     class: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
     config:
