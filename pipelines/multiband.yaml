@@ -26,7 +26,7 @@ tasks:
         from u2k.deblend import PiecewiseScarletDeblendTask
         config.multibandDeblend.retarget(PiecewiseScarletDeblendTask)
   measure:
-    class: lsst.pipe.tasks.multiBand.MeasureMergedCoaddSourcesTask
+    class: u2k.measure.MeasureTask
     config:
       useCellCoadds: false
       doPropagateFlags: false
@@ -35,7 +35,7 @@ tasks:
     config:
       file: $U2K_DIR/config/priorityList.py
   forcedPhotCoadd:
-    class: lsst.drp.tasks.forcedPhotCoadd.ForcedPhotCoaddTask
+    class: u2k.measure.ForcedTask
     config:
       useCellCoadds: false
 
