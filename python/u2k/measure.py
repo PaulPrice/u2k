@@ -8,7 +8,7 @@ class MeasureTask(MeasureMergedCoaddSourcesTask):
     This override adds required mask planes that might be missing.
     """
 
-    def run(self, exposure, *args, **kwargs):
+    def run(self, exposure, sources, skyInfo, *args, **kwargs):
         maskPlanes = set()
         maskPlanes |= set(self.config.measurement.plugins["base_PixelFlags"].masksFpCenter)
         maskPlanes |= set(self.config.measurement.plugins["base_PixelFlags"].masksFpAnywhere)
@@ -16,7 +16,8 @@ class MeasureTask(MeasureMergedCoaddSourcesTask):
         for name in maskPlanes:
             exposure.mask.addMaskPlane(name)
 
-        return super().run(exposure, *args, **kwargs)
+        exposure.setWcs(skyInfo.wcs)
+        return super().run(exposure, sources, skyInfo, *args, **kwargs)
 
 
 class ForcedTask(ForcedPhotCoaddTask):
@@ -25,7 +26,7 @@ class ForcedTask(ForcedPhotCoaddTask):
     This override adds required mask planes that might be missing.
     """
 
-    def run(self, measCat, exposure, *args, **kwargs):
+    def run(self, measCat, exposure, refCat, refWcs, *args, **kwargs):
         maskPlanes = set()
         maskPlanes |= set(self.config.measurement.plugins["base_PixelFlags"].masksFpCenter)
         maskPlanes |= set(self.config.measurement.plugins["base_PixelFlags"].masksFpAnywhere)
@@ -33,4 +34,5 @@ class ForcedTask(ForcedPhotCoaddTask):
         for name in maskPlanes:
             exposure.mask.addMaskPlane(name)
 
-        return super().run(measCat, exposure, *args, **kwargs)
+        exposure.setWcs(refWcs)
+        return super().run(measCat, exposure, refCat, refWcs, *args, **kwargs)
