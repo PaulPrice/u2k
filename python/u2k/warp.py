@@ -173,6 +173,9 @@ def warpExposures(
     coadd.setPhotoCalib(PhotoCalib(1.0))
     coadd.metadata["BUNIT"] = "nJy"
 
+    coadd.setWcs(patchInfo.getWcs())
+    coadd.setFilter(FilterLabel.fromBand(exposureList[0].getFilter().bandLabel))
+
     # Set the PSF and aperture corrections
     inputRecorder.finish(coadd, totalGood)
     coadd.setPsf(CoaddPsf(
@@ -180,8 +183,5 @@ def warpExposures(
         patchInfo.getWcs(),
         CoaddPsfConfig().makeControl(),
     ))
-
-    coadd.setWcs(patchInfo.getWcs())
-    coadd.setFilter(FilterLabel.fromBand(exposureList[0].getFilter().bandLabel))
 
     return coadd
