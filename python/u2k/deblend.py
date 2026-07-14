@@ -126,7 +126,7 @@ class PiecewiseScarletDeblendConfig(ScarletDeblendConfig):
     """
 
     boxSize = pexConfig.Field[int](
-        default=300,
+        default=100,
         doc=(
             "Side length (pixels) of the primary region of each tile used when "
             "breaking up a large footprint for piecewise deblending. "
