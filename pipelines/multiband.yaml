@@ -174,3 +174,28 @@ subsets:
       - analyzeObjectTableCore
     description:
       Analysis of the object catalogs.
+
+  step1:
+    subset:
+      - detection
+      - mergeDetections
+      - deconvolve
+    description: >
+      Tasks before deblending, which can use full nodes.
+  step2:
+    subset:
+      - deblend
+    description: >
+      Deblending, which needs more memory per core.
+  step3:
+    subset:
+      - measure
+      - mergeMeasurements
+      - forcedPhotCoadd
+      - fitDeepCoaddPsfGaussians
+      - fitDeblendedObjectsExp
+      - fitDeblendedObjectsSersic
+      - writeObjectTable
+      - transformObjectTable
+      - consolidateObjectTable
+      - analyzeObjectTableCore
