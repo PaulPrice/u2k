@@ -199,3 +199,5 @@ subsets:
       - transformObjectTable
       - consolidateObjectTable
       - analyzeObjectTableCore
+    description: >
+      Tasks after deblending, which can again use full nodes.
