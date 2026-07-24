@@ -1,0 +1,24 @@
+description: Measure a FiberKernel from quartzes, and generate a new fiberProfile
+instrument: u2k.instrument.GenericCoadd
+
+tasks:
+  detection:
+    class: u2k.detection.DetectCoaddSourcesTask
+    config:
+      file: $U2K_DIR/config/packer.py
+      useCellCoadds: false
+  mergeDetections:
+    class: lsst.pipe.tasks.mergeDetections.MergeDetectionsTask
+    config:
+      file: $U2K_DIR/config/priorityList.py
+  deconvolve:
+    class: lsst.meas.extensions.scarlet.deconvolveExposureTask.DeconvolveExposureTask
+    config:
+      useCellCoadds: false
+  deblend:
+    class: lsst.pipe.tasks.deblendCoaddSourcesPipeline.DeblendCoaddSourcesMultiTask
+    config:
+      useCellCoadds: false
+      python: |
+        from lsst.meas.extensions.scarlet.piecewiseScarletDeblendTask import PiecewiseScarletDeblendTask
+        config.multibandDeblend.retarget(PiecewiseScarletDeblendTask)
