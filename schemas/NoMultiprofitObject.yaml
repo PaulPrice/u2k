@@ -58,6 +58,7 @@ funcs:
     refBand:
         functor: ReferenceBand
         dataset: ref
+        bands: ["HSC-I", "HSC-R", "HSC-Z", "HSC-Y", "HSC-G", "VIRCAM-Y", "VIRCAM-J", "WFCAM-J", "WIRCAM-J", "WFCAM-WIRCAM-J", "VIRCAM-H", "WFCAM-H", "WIRCAM-H", "VIRCAM-Ks", "WFCAM-K", "WIRCAM-K", "MegaCam-uS", "MegaCam-u", "HSC-NB0816", "HSC-NB0718", "HSC-NB0527", "HSC-NB0921", "HSC-NB0973", "HSC-NB0387", "HSC-NB1010", "VIRCAM-NB118"]
     # TODO DM-22241: Evaluate moving point source model
     #  - current plan requires matching to Source Table
     # psRadecTai: No moving point source model yet
