@@ -10,3 +10,15 @@ try:
     config.plugins.names |= ["ext_shapeHSM_HsmPsfMomentsDebiased"]
 except LookupError as e:
     print("Cannot enable shapeHSM (%s): disabling HSM shape measurements" % (e,))
+
+for name in (
+    "ext_shapeHSM_HigherOrderMomentsSource",
+    "ext_shapeHSM_HsmSourceMoments",
+    "ext_shapeHSM_HsmSourceMomentsRound",
+    "ext_shapeHSM_HsmPsfMomentsDebiased",
+    "ext_shapeHSM_HsmShapeBj",
+    "ext_shapeHSM_HsmShapeLinear",
+    "ext_shapeHSM_HsmShapeKsb",
+    "ext_shapeHSM_HsmShapeRegauss",
+):
+    config.plugins[name].badMaskPlanes = ["NO_DATA", "BAD", "SAT", "INTRP"]
