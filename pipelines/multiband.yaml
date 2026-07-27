@@ -1,9 +1,6 @@
 description: Measure a FiberKernel from quartzes, and generate a new fiberProfile
 instrument: u2k.instrument.GenericCoadd
 
-imports:
-  - location: $MEAS_EXTENSIONS_MULTIPROFIT_DIR/pipelines/multiprofit_fit_standard.yaml
-
 tasks:
   detection:
     class: u2k.detection.DetectCoaddSourcesTask
@@ -40,8 +37,8 @@ tasks:
       useCellCoadds: false
 
   writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
-  transformObjectTable: u2k.transformObjects.NoEpochTransformObjectCatalogTask
-  consolidateObjectTable: u2k.transformObjects.ConsolidateObjectTableTask
+  transformObjectTable: u2k.transformObjects.NoMultiprofitTransformObjectCatalogTask
+  consolidateObjectTable: u2k.transformObjects.NoMultiprofitConsolidateObjectTableTask
 
   analyzeObjectTableCore:
     class: u2k.analysis.ObjectTableTractAnalysisTask
@@ -152,14 +149,6 @@ subsets:
     description: >
       A set of tasks to run when making measurements on coadds.
 
-  multiprofit:
-    subset:
-      - fitDeepCoaddPsfGaussians
-      - fitDeblendedObjectsExp
-      - fitDeblendedObjectsSersic
-    description: >
-      Tasks involving multiprofit
-
   catalogs:
     subset:
       - writeObjectTable
@@ -192,9 +181,6 @@ subsets:
       - measure
       - mergeMeasurements
       - forcedPhotCoadd
-      - fitDeepCoaddPsfGaussians
-      - fitDeblendedObjectsExp
-      - fitDeblendedObjectsSersic
       - writeObjectTable
       - transformObjectTable
       - consolidateObjectTable

@@ -54,6 +54,55 @@ class NoEpochTransformObjectCatalogTask(TransformObjectCatalogTask):
         butler.put(result, outputRefs)
 
 
+class NoMultiprofitTransformObjectCatalogConnections(NoEpochTransformObjectCatalogConnections):
+    """Connections for NoMultiprofitTransformObjectCatalogTask"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        del self.inputCatalogExpMultiprofit
+        del self.inputCatalogSersicMultiprofit
+
+
+class NoMultiprofitTransformObjectCatalogConfig(
+    NoEpochTransformObjectCatalogConfig, pipelineConnections=NoMultiprofitTransformObjectCatalogConnections
+):
+    """Config for NoMultiprofitTransformObjectCatalogTask"""
+
+    def setDefaults(self):
+        super().setDefaults()
+        self.functorFile = getPackageDir("u2k") + "/schemas/NoMultiprofitObject.yaml"
+
+
+class NoMultiprofitTransformObjectCatalogTask(NoEpochTransformObjectCatalogTask):
+    """Task to transform an object catalog for a coadd exposure, without epoch information or multiprofit catalogs."""
+
+    ConfigClass = NoMultiprofitTransformObjectCatalogConfig
+    _DefaultName = "transformObjectCatalog"
+    datasets_multiband = ("ref",)
+
+    def runQuantum(self, butlerQC, inputRefs, outputRefs):
+        inputs = butlerQC.get(inputRefs)
+        if self.funcs is None:
+            raise ValueError("config.functorFile is None. "
+                             "Must be a valid path to yaml in order to run Task as a PipelineTask.")
+        result = self.run(handle=inputs["inputCatalog"], funcs=self.funcs,
+                          dataId=dict(outputRefs.outputCatalog.dataId.mapping),
+                          handle_ref=inputs["inputCatalogRef"],
+                          )
+        butlerQC.put(result, outputRefs)
+
+
+class NoMultiprofitConsolidateObjectTableConfig(lsst.pipe.tasks.postprocess.ConsolidateObjectTableConfig):
+    """Config for ConsolidateObjectTableTask that does not include multiprofit catalogs."""
+    def setDefaults(self):
+        super().setDefaults()
+        del self.actions.extendedness  # Requires multiprofit results for size
+
+
+class NoMultiprofitConsolidateObjectTableTask(lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask):
+    """Task to consolidate an object table for a coadd exposure, without multiprofit catalogs."""
+    ConfigClass = NoMultiprofitConsolidateObjectTableConfig
+
+
 # The following class is not used directly, but serves as trigger to monkeypatch
 # the TableVStack used by ConsolidateObjectTableTask, which is used by the pipeline.
 class ConsolidateObjectTableTask(lsst.pipe.tasks.postprocess.ConsolidateObjectTableTask):
