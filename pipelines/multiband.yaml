@@ -7,6 +7,7 @@ tasks:
     config:
       file: $U2K_DIR/config/packer.py
       useCellCoadds: false
+      detection.excludeMaskPlanes: ["NO_DATA"]
   mergeDetections:
     class: lsst.pipe.tasks.mergeDetections.MergeDetectionsTask
     config:
