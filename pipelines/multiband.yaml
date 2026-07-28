@@ -36,7 +36,7 @@ tasks:
     config:
       useCellCoadds: false
 
-  writeObjectTable: lsst.pipe.tasks.postprocess.WriteObjectTableTask
+  writeObjectTable: u2k.writeObjects.NoMultiprofitWriteObjectTableTask
   transformObjectTable: u2k.transformObjects.NoMultiprofitTransformObjectCatalogTask
   consolidateObjectTable: u2k.transformObjects.NoMultiprofitConsolidateObjectTableTask
 
