@@ -63,9 +63,7 @@ def calibrateAsiaa(
     """
     exposure.mask.array[:] = 0
     # The variance goes as the inverse of the exposure time.
-    variance = 1.0 / np.clip(timeImage.array, 0.0, None)
-    variance[~np.isfinite(variance)] = 0.0
-    exposure.variance.array[:] = variance
+    exposure.variance.array[:] = 1.0 / np.clip(timeImage.array, 0.0, None)
 
     good = np.isfinite(exposure.image.array)
     exposure.image.array[~good] = 0.0
