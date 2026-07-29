@@ -66,8 +66,9 @@ def main():
     for pattern, band in (
         ("WI_COSMOS_?-J.fits", "WIRCAM-J"),
         ("WI_XMMLSS_?-J.fits", "WIRCAM-J"),
+        ("WF+WI_DEEP23-J.fits", "WFCAM-J"),
         ("WF_DEEP23-K-combine.fits", "WFCAM-K"),
-        ("WF_ECOSMOS-??-J-combine.fits", "WFCAM-J"),
+        ("WF*COSMOS*-J*.fits", "WFCAM-J"),  # includes WF_ECOSMOS-??-J-combine.fits and WF+WI_COSMOS-J.fits
         ("WF_ECOSMOS-??-H-combine.fits", "WFCAM-H"),
         ("WF_ECOSMOS-??-K-combine.fits", "WFCAM-K"),
     ):
