@@ -66,9 +66,10 @@ def main():
     for pattern, band in (
         ("WI_COSMOS_?-J.fits", "WIRCAM-J"),
         ("WI_XMMLSS_?-J.fits", "WIRCAM-J"),
-        ("WF+WI_DEEP23-J.fits", "WFCAM-J"),
+        ("WF+WI_DEEP23-J.fits", "WFCAM-WIRCAM-J"),
         ("WF_DEEP23-K-combine.fits", "WFCAM-K"),
-        ("WF*COSMOS*-J*.fits", "WFCAM-J"),  # includes WF_ECOSMOS-??-J-combine.fits and WF+WI_COSMOS-J.fits
+        ("WF+WI_COSMOS-J.fits", "WFCAM-WIRCAM-J"),  # ASIAA combined processing; appears convolved
+        ("WF_ECOSMOS-??-J-combine.fits", "WFCAM-J"),
         ("WF_ECOSMOS-??-H-combine.fits", "WFCAM-H"),
         ("WF_ECOSMOS-??-K-combine.fits", "WFCAM-K"),
     ):
