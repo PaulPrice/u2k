@@ -6,6 +6,8 @@ import lsst.afw.geom
 import lsst.meas.algorithms.skyObjects
 import lsst.pipe.tasks.multiBand
 
+from lsst.afw.image import PhotoCalib
+
 __all__ = ("DetectCoaddSourcesTask", "generateSkyObjects")
 
 
@@ -17,8 +19,18 @@ class DetectCoaddSourcesTask(lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask):
         processing; these have already had detection run on them. The old
         ``DETECTED`` mask plane is getting in the way of our new detection, so
         we clear it first.
+
+        We also need to rescale the image so that it's in units of nJy (not with
+        a magnitude zero point of 27 as previous LSST versions used), as this
+        is what the TransformObjectCatalogTask expects.
         """
         exposure.mask.array &= ~exposure.mask.getPlaneBitMask("DETECTED")
+
+        photoCalib = exposure.getPhotoCalib()
+        assert photoCalib is not None, "Exposure has no PhotoCalib"
+        exposure.setMaskedImage(photoCalib.calibrateImage(exposure.maskedImage))
+        exposure.setPhotoCalib(PhotoCalib(1.0))
+
         return super().run(exposure, *args, **kwargs)
 
 
