@@ -28,6 +28,12 @@ class DetectCoaddSourcesTask(lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask):
 
         photoCalib = exposure.getPhotoCalib()
         assert photoCalib is not None, "Exposure has no PhotoCalib"
+
+        if photoCalib.getCalibrationMean() == 27.0:
+            # A magnitude zero-point is getting confused as a flux zero-point
+            # We want a ZP of 31.4 mag for nJy, and we have 27, so a mag difference of 4.4
+            photoCalib = PhotoCalib(10**(0.4*4.4))
+
         exposure.setMaskedImage(photoCalib.calibrateImage(exposure.maskedImage))
         exposure.setPhotoCalib(PhotoCalib(1.0))
 
