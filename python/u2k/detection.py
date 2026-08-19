@@ -6,7 +6,7 @@ import lsst.afw.geom
 import lsst.meas.algorithms.skyObjects
 import lsst.pipe.tasks.multiBand
 
-from lsst.afw.image import PhotoCalib
+from .fixCoadd import fixCoadd
 
 __all__ = ("DetectCoaddSourcesTask", "generateSkyObjects")
 
@@ -24,19 +24,7 @@ class DetectCoaddSourcesTask(lsst.pipe.tasks.multiBand.DetectCoaddSourcesTask):
         a magnitude zero point of 27 as previous LSST versions used), as this
         is what the TransformObjectCatalogTask expects.
         """
-        exposure.mask.array &= ~exposure.mask.getPlaneBitMask("DETECTED")
-
-        photoCalib = exposure.getPhotoCalib()
-        assert photoCalib is not None, "Exposure has no PhotoCalib"
-
-        if photoCalib.getCalibrationMean() == 27.0:
-            # A magnitude zero-point is getting confused as a flux zero-point
-            # We want a ZP of 31.4 mag for nJy, and we have 27, so a mag difference of 4.4
-            photoCalib = PhotoCalib(10**(0.4*4.4))
-
-        exposure.setMaskedImage(photoCalib.calibrateImage(exposure.maskedImage))
-        exposure.setPhotoCalib(PhotoCalib(1.0))
-
+        fixCoadd(exposure)
         return super().run(exposure, *args, **kwargs)
 
 

@@ -13,6 +13,7 @@ from lsst.pipe.tasks.coaddInputRecorder import CoaddInputRecorderTask
 from lsst.skymap import BaseSkyMap, PatchInfo
 
 from .detector import makeDetector
+from .fixCoadd import fixCoadd
 from .math import renormalizeVariance
 
 
@@ -143,6 +144,7 @@ def warpExposures(
         dataRef = butler.find_dataset(datasetType, dataId, collections=oldCollection)
         if dataRef:
             old = butler.get(dataRef)
+            fixCoadd(old)
             assert old.getDimensions() == sumImage.getDimensions()
             old.maskedImage = old.getPhotoCalib().calibrateImage(old.maskedImage)
             old.setDetector(makeDetector())
